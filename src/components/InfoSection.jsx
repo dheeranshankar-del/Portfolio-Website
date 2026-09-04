@@ -1,113 +1,61 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { ArrowUpRight, Mail, FileText } from 'lucide-react';
-import { LinkedinIcon, GithubIcon } from './Icons';
-import { personalInfo } from '../data/portfolioData';
-import ScrambleName from './ScrambleName';
-import { assetPath } from '../utils/assetPath';
-
-/* Easter Egg: Single-burst electrical shock after 3 continuous seconds in About viewport */
-function ElectricalShockLetter({ char, trigger }) {
-  const [animating, setAnimating] = useState(false);
-  const [hasTriggered, setHasTriggered] = useState(false);
-
-  useEffect(() => {
-    if (!trigger || hasTriggered) return;
-
-    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (prefersReduced) return;
-
-    setHasTriggered(true);
-    setAnimating(true);
-
-    const timer = setTimeout(() => {
-      setAnimating(false);
-    }, 1000); // 1000ms total strike & afterglow fade
-
-    return () => clearTimeout(timer);
-  }, [trigger, hasTriggered]);
-
-  if (!animating) {
-    return <span>{char}</span>;
-  }
-
-  return (
-    <span className="relative inline-block">
-      {/* Micro Lightning Bolt SVG (Strikes onto the 'i' dot for ~120ms) */}
-      <svg
-        className="absolute -top-3.5 left-1/2 -translate-x-1/2 w-2.5 h-4 pointer-events-none z-20 animate-[dwellBolt_140ms_ease-out_forwards]"
-        viewBox="0 0 10 18"
-        fill="none"
-      >
-        <path
-          d="M 6 0 L 2.5 7 L 6.5 8 L 3 16"
-          stroke="#38BDF8"
-          strokeWidth="1.2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="drop-shadow-[0_0_3px_#38BDF8]"
-        />
-        <path
-          d="M 6 0 L 2.5 7 L 6.5 8 L 3 16"
-          stroke="#FFFFFF"
-          strokeWidth="0.6"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
-
-      {/* Micro Impact Sparks (fade over ~450ms) */}
-      <span className="absolute -top-0.5 -left-1 w-1 h-1 rounded-full bg-[#FFFFFF] shadow-[0_0_4px_#38BDF8] animate-[dwellSparkL_450ms_ease-out_forwards] pointer-events-none" />
-      <span className="absolute -top-1 -right-1 w-0.5 h-0.5 rounded-full bg-[#E0F2FE] shadow-[0_0_4px_#60A5FA] animate-[dwellSparkR_450ms_ease-out_forwards] pointer-events-none" />
-
-      {/* Letter 'i': impact flash → blue-white glow → gradual fade back to normal (1000ms total) */}
-      <span className="inline-block animate-[dwellJitterGlow_1000ms_ease-out_forwards]">
-        {char}
-      </span>
-    </span>
-  );
-}
-
 export default function InfoSection() {
   const sectionRef = useRef(null);
-  const [isDwellTriggered, setIsDwellTriggered] = useState(false);
-  const [isInView, setIsInView] = useState(false);
-  const hasEverFired = useRef(false);
+  const electricalIRef = useRef(null);
+
+  const [hasScrambledName, setHasScrambledName] = useState(false);
+  const [isElectricalAnimating, setIsElectricalAnimating] = useState(false);
+
+  const hasLightningTriggeredRef = useRef(false);
+  const dwellTimerRef = useRef(null);
+  const animTimerRef = useRef(null);
 
   useEffect(() => {
     const section = sectionRef.current;
     if (!section) return;
 
-    let dwellTimer = null;
-
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          setIsInView(true);
-          // Start 10-second continuous dwell timer if not fired yet
-          if (!hasEverFired.current && !dwellTimer) {
-            dwellTimer = setTimeout(() => {
-              hasEverFired.current = true;
-              setIsDwellTriggered(true);
-            }, 10000);
+          // Trigger name scramble ONCE on initial view and lock it
+          setHasScrambledName(true);
+
+          // 3-second continuous dwell timer for electrical shock on 'i'
+          if (!hasLightningTriggeredRef.current && !dwellTimerRef.current) {
+            dwellTimerRef.current = setTimeout(() => {
+              const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+              if (!prefersReduced && electricalIRef.current) {
+                hasLightningTriggeredRef.current = true;
+                setIsElectricalAnimating(true);
+
+                if (animTimerRef.current) clearTimeout(animTimerRef.current);
+                animTimerRef.current = setTimeout(() => {
+                  setIsElectricalAnimating(false);
+                }, 1000);
+              }
+            }, 3000); // 3 continuous seconds
           }
         } else {
-          setIsInView(false);
-          // Cancel/reset timer immediately if user scrolls away before 10s!
-          if (dwellTimer) {
-            clearTimeout(dwellTimer);
-            dwellTimer = null;
+          // User scrolled away before 3 seconds! Cancel & reset dwell timer immediately
+          if (dwellTimerRef.current) {
+            clearTimeout(dwellTimerRef.current);
+            dwellTimerRef.current = null;
           }
         }
       },
-      { threshold: 0.4 } // Section must be meaningfully visible in viewport
+      { threshold: 0.4 } // Section must be 40% visible in viewport
     );
 
     observer.observe(section);
 
     return () => {
       observer.disconnect();
-      if (dwellTimer) {
-        clearTimeout(dwellTimer);
+      if (dwellTimerRef.current) {
+        clearTimeout(dwellTimerRef.current);
+        dwellTimerRef.current = null;
+      }
+      if (animTimerRef.current) {
+        clearTimeout(animTimerRef.current);
+        animTimerRef.current = null;
       }
     };
   }, []);
@@ -157,10 +105,50 @@ export default function InfoSection() {
         {/* Top: Name + Subheading matching exact Hero Subtitle Typography */}
         <div className="space-y-2">
           <h2 className="text-2xl sm:text-3xl font-bold font-heading text-white tracking-tight">
-            <ScrambleName text="Dheeran Shankar" isInView={isInView} />
+            <ScrambleName text="Dheeran Shankar" isInView={hasScrambledName} />
           </h2>
           <div className="text-[16px] sm:text-[18px] font-medium text-white/80 tracking-normal flex items-center flex-wrap gap-y-1">
-            <span>Electr<ElectricalShockLetter char="i" trigger={isDwellTriggered} />cal Engineering</span>
+            <span>
+              Electr
+              <span
+                ref={electricalIRef}
+                className={`electrical-i inline-block ${
+                  isElectricalAnimating
+                    ? 'relative text-white [text-shadow:0_0_4px_rgba(56,189,248,0.9)] animate-[dwellJitterGlow_1000ms_ease-out_forwards]'
+                    : ''
+                }`}
+              >
+                {isElectricalAnimating && (
+                  <>
+                    <svg
+                      className="absolute -top-3.5 left-1/2 -translate-x-1/2 w-2.5 h-4 pointer-events-none z-20 animate-[dwellBolt_140ms_ease-out_forwards]"
+                      viewBox="0 0 10 18"
+                      fill="none"
+                    >
+                      <path
+                        d="M 6 0 L 2.5 7 L 6.5 8 L 3 16"
+                        stroke="#38BDF8"
+                        strokeWidth="1.2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="drop-shadow-[0_0_3px_#38BDF8]"
+                      />
+                      <path
+                        d="M 6 0 L 2.5 7 L 6.5 8 L 3 16"
+                        stroke="#FFFFFF"
+                        strokeWidth="0.6"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                    <span className="absolute -top-0.5 -left-1 w-1 h-1 rounded-full bg-[#FFFFFF] shadow-[0_0_4px_#38BDF8] animate-[dwellSparkL_450ms_ease-out_forwards] pointer-events-none" />
+                    <span className="absolute -top-1 -right-1 w-0.5 h-0.5 rounded-full bg-[#E0F2FE] shadow-[0_0_4px_#60A5FA] animate-[dwellSparkR_450ms_ease-out_forwards] pointer-events-none" />
+                  </>
+                )}
+                i
+              </span>
+              cal Engineering
+            </span>
             <span className="font-semibold text-white ml-1.5 flex items-center gap-1.5">
               @
               <img
