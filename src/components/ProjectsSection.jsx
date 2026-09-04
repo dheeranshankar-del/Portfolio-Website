@@ -30,7 +30,7 @@ function EditorialProjectSection({ project }) {
     setPcbAutoHighlight(true);
     setTimeout(() => {
       setPcbAutoHighlight(false);
-    }, 3000);
+    }, 2500);
   };
 
   const isAlternate = project.layout === 'alternate';
