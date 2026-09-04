@@ -312,6 +312,44 @@ function TypewriterHighlights({ highlights, isVisible, onComplete }) {
   const [labelCharCount, setLabelCharCount] = useState(0);
   const [descCharCount, setDescCharCount] = useState(0);
   const [isFinished, setIsFinished] = useState(false);
+  const [speedMultiplier, setSpeedMultiplier] = useState(1);
+
+  // Monitor scroll velocity: faster scrolling accelerates typing or instantly completes
+  useEffect(() => {
+    if (!isVisible || isFinished) return;
+
+    let lastScrollY = window.scrollY;
+    let lastTime = performance.now();
+
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      const currentTime = performance.now();
+      const dt = currentTime - lastTime;
+
+      if (dt > 8) {
+        const deltaY = Math.abs(currentScrollY - lastScrollY);
+        const velocity = deltaY / dt; // px/ms
+
+        if (velocity > 1.2) {
+          // Rapid scroll -> Finish instantly so all text & PCB callouts render right away
+          setIsFinished(true);
+          if (onComplete) onComplete();
+        } else if (velocity > 0.3) {
+          // Fast scroll -> 3x typing speed acceleration
+          setSpeedMultiplier(0.3);
+        } else {
+          // Normal scroll -> Standard speed
+          setSpeedMultiplier(1);
+        }
+
+        lastScrollY = currentScrollY;
+        lastTime = currentTime;
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [isVisible, isFinished, onComplete]);
 
   useEffect(() => {
     if (!isVisible || isFinished) return;
@@ -326,29 +364,32 @@ function TypewriterHighlights({ highlights, isVisible, onComplete }) {
 
     // Phase 1: Type out Label
     if (labelCharCount < currentItem.label.length) {
+      const labelDelay = Math.max(4, Math.round(20 * speedMultiplier));
       const timer = setTimeout(() => {
         setLabelCharCount((prev) => prev + 1);
-      }, 22);
+      }, labelDelay);
       return () => clearTimeout(timer);
     }
 
     // Phase 2: Type out Description
     if (descCharCount < currentItem.desc.length) {
+      const descDelay = Math.max(4, Math.round(14 * speedMultiplier));
       const timer = setTimeout(() => {
         setDescCharCount((prev) => prev + 1);
-      }, 16);
+      }, descDelay);
       return () => clearTimeout(timer);
     }
 
     // Phase 3: Pause briefly before next row
+    const pauseDelay = Math.max(30, Math.round(120 * speedMultiplier));
     const pauseTimer = setTimeout(() => {
       setActiveRow((prev) => prev + 1);
       setLabelCharCount(0);
       setDescCharCount(0);
-    }, 140);
+    }, pauseDelay);
 
     return () => clearTimeout(pauseTimer);
-  }, [isVisible, activeRow, labelCharCount, descCharCount, isFinished, highlights]);
+  }, [isVisible, activeRow, labelCharCount, descCharCount, isFinished, highlights, speedMultiplier, onComplete]);
 
   return (
     <div className="space-y-2.5 py-1">
