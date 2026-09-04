@@ -31,7 +31,7 @@ function ScrambleLetter({ char }) {
         y: randomY,
         color: randomColor
       });
-    }, 30);
+    }, 75);
   };
 
   const stopScramble = () => {
