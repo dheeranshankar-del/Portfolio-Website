@@ -10,44 +10,74 @@ export default function ClickGalaxyOverlay() {
         return;
       }
 
-      // Ignore clicks on zero-coordinate synthetic events
+      // Ignore synthetic 0,0 clicks
       if (e.clientX === 0 && e.clientY === 0) return;
 
       const id = Date.now() + Math.random();
       const x = e.clientX;
       const y = e.clientY;
 
-      // Random variations for rotation, size, and particles
+      // Base rotation and scale variation (55px to 80px target size)
       const baseRotation = Math.floor(Math.random() * 360);
-      const scale = 0.85 + Math.random() * 0.3; // 0.85 to 1.15 (~50px to 65px bloom)
-      
-      // Generate 4 to 6 faint star particles
-      const particleCount = 4 + Math.floor(Math.random() * 3);
-      const particles = Array.from({ length: particleCount }).map((_, idx) => {
-        const angle = (idx * (360 / particleCount)) + (Math.random() * 30 - 15);
-        const rad = (angle * Math.PI) / 180;
-        const distance = 14 + Math.random() * 16; // 14px to 30px outward drift
+      const scale = 0.85 + Math.random() * 0.3; // 0.85 to 1.15
+
+      // Asymmetrical cloud shape offset layers (3 irregular organic blobs)
+      const cloudBlobs = [
+        {
+          id: 1,
+          borderRadius: '42% 58% 70% 30% / 45% 45% 55% 55%',
+          transform: `rotate(${Math.floor(Math.random() * 45)}deg) scale(${0.9 + Math.random() * 0.2})`,
+          background: 'radial-gradient(ellipse at 40% 40%, rgba(56, 75, 112, 0.40) 0%, rgba(30, 41, 59, 0.25) 55%, transparent 85%)',
+          blur: ' blur-[9px]',
+        },
+        {
+          id: 2,
+          borderRadius: '60% 40% 30% 70% / 50% 30% 70% 50%',
+          transform: `rotate(${Math.floor(Math.random() * 90 + 45)}deg) scale(${0.75 + Math.random() * 0.25}) translate(12%, -8%)`,
+          background: 'radial-gradient(ellipse at 50% 60%, rgba(100, 116, 139, 0.35) 0%, rgba(30, 41, 59, 0.18) 60%, transparent 80%)',
+          blur: ' blur-[7px]',
+        },
+        {
+          id: 3,
+          borderRadius: '35% 65% 55% 45% / 60% 40% 60% 40%',
+          transform: `rotate(${Math.floor(Math.random() * 120 + 110)}deg) scale(${0.6 + Math.random() * 0.3}) translate(-10%, 14%)`,
+          background: 'radial-gradient(circle at 45% 45%, rgba(148, 163, 184, 0.38) 0%, rgba(51, 65, 85, 0.20) 50%, transparent 75%)',
+          blur: ' blur-[5px]',
+        },
+      ];
+
+      // Generate 5 to 8 static, randomized internal star points (no explosion)
+      const starCount = 5 + Math.floor(Math.random() * 4);
+      const stars = Array.from({ length: starCount }).map((_, idx) => {
+        // Random offset within -28px to +28px relative to center
+        const offsetX = (Math.random() - 0.5) * 52;
+        const offsetY = (Math.random() - 0.5) * 52;
+        const size = 1.0 + Math.random() * 1.4; // 1.0px to 2.4px
+        const isWarmYellow = Math.random() < 0.25; // 25% chance of pale warm yellow star
+
         return {
           id: idx,
-          dx: Math.cos(rad) * distance,
-          dy: Math.sin(rad) * distance,
-          size: 1 + Math.random() * 1.2, // 1px to 2.2px
-          opacity: 0.4 + Math.random() * 0.4,
+          x: offsetX,
+          y: offsetY,
+          size,
+          color: isWarmYellow ? 'bg-amber-100/90' : 'bg-slate-100/90',
+          shadow: isWarmYellow ? 'shadow-[0_0_2px_rgba(254,243,199,0.8)]' : 'shadow-[0_0_2px_rgba(255,255,255,0.8)]',
+          opacity: 0.35 + Math.random() * 0.45,
+          twinkleDelay: Math.floor(Math.random() * 600),
         };
       });
 
-      const newGalaxy = { id, x, y, baseRotation, scale, particles };
+      const newGalaxy = { id, x, y, baseRotation, scale, cloudBlobs, stars };
 
       setGalaxies((prev) => {
-        // Cap active galaxies to max 5
         const updated = prev.length >= 5 ? prev.slice(prev.length - 4) : prev;
         return [...updated, newGalaxy];
       });
 
-      // Automatically remove from DOM after 1500ms animation finishes
+      // Remove after 2000ms animation finishes
       setTimeout(() => {
         setGalaxies((prev) => prev.filter((g) => g.id !== id));
-      }, 1500);
+      }, 2000);
     };
 
     window.addEventListener('click', handleClick, { capture: true });
@@ -62,37 +92,31 @@ export default function ClickGalaxyOverlay() {
   return (
     <div className="pointer-events-none fixed inset-0 z-[99999] overflow-hidden select-none" aria-hidden="true">
       <style>{`
-        @keyframes miniGalaxyFade {
+        @keyframes irregularGalaxyLifecycle {
           0% {
-            transform: translate(-50%, -50%) scale(0.25) rotate(0deg);
+            transform: translate(-50%, -50%) scale(0.3) rotate(0deg);
             opacity: 0;
           }
-          18% {
-            transform: translate(-50%, -50%) scale(0.85) rotate(6deg);
+          15% {
+            opacity: 0.15;
+          }
+          35% {
+            transform: translate(-50%, -50%) scale(0.85) rotate(4deg);
             opacity: 0.32;
           }
-          55% {
-            transform: translate(-50%, -50%) scale(1.05) rotate(16deg);
-            opacity: 0.22;
+          60% {
+            transform: translate(-50%, -50%) scale(1.02) rotate(9deg);
+            opacity: 0.28;
           }
           100% {
-            transform: translate(-50%, -50%) scale(1.3) rotate(28deg);
+            transform: translate(-50%, -50%) scale(1.22) rotate(16deg);
             opacity: 0;
           }
         }
 
-        @keyframes starParticleDrift {
-          0% {
-            transform: translate(0, 0) scale(0.3);
-            opacity: 0;
-          }
-          20% {
-            opacity: var(--p-op);
-          }
-          100% {
-            transform: translate(var(--p-dx), var(--p-dy)) scale(1);
-            opacity: 0;
-          }
+        @keyframes starPointTwinkle {
+          0%, 100% { opacity: var(--star-op); }
+          50% { opacity: calc(var(--star-op) * 0.4); }
         }
       `}</style>
 
@@ -102,58 +126,47 @@ export default function ClickGalaxyOverlay() {
           style={{
             left: `${g.x}px`,
             top: `${g.y}px`,
-            animation: 'miniGalaxyFade 1400ms cubic-bezier(0.16, 1, 0.3, 1) forwards',
+            animation: 'irregularGalaxyLifecycle 2000ms cubic-bezier(0.22, 1, 0.36, 1) forwards',
             transformOrigin: 'center center',
           }}
-          className="absolute pointer-events-none w-[60px] h-[60px]"
+          className="absolute pointer-events-none w-[75px] h-[75px]"
         >
-          {/* Outer Soft Dark Blue / Violet / Smoky Gray Nebula Bloom Cloud */}
+          {/* Main Rotating Container for Irregular Cloud Layers */}
           <div
             style={{
               transform: `rotate(${g.baseRotation}deg) scale(${g.scale})`,
             }}
-            className="w-full h-full rounded-full pointer-events-none blur-[7px]"
+            className="w-full h-full relative pointer-events-none"
           >
-            <div 
-              className="w-full h-full rounded-full"
-              style={{
-                background: 'radial-gradient(circle at 45% 45%, rgba(99, 102, 241, 0.35) 0%, rgba(49, 46, 129, 0.25) 35%, rgba(30, 41, 59, 0.15) 70%, transparent 100%)',
-              }}
-            />
-          </div>
+            {/* Multi-Layered Asymmetrical Dusty Blue-Gray Cloud Blobs */}
+            {g.cloudBlobs.map((blob) => (
+              <div
+                key={blob.id}
+                style={{
+                  borderRadius: blob.borderRadius,
+                  transform: blob.transform,
+                  background: blob.background,
+                }}
+                className={`absolute inset-0 pointer-events-none ${blob.blur}`}
+              />
+            ))}
 
-          {/* Secondary Layer: Faint Asymmetric Oval Core */}
-          <div
-            style={{
-              transform: `rotate(${g.baseRotation + 45}deg) scale(${g.scale * 0.7})`,
-            }}
-            className="absolute inset-1 rounded-[40%] blur-[5px] pointer-events-none opacity-70"
-          >
-            <div 
-              className="w-full h-full rounded-[40%]"
-              style={{
-                background: 'radial-gradient(ellipse at 50% 50%, rgba(199, 210, 254, 0.30) 0%, rgba(99, 102, 241, 0.15) 50%, transparent 100%)',
-              }}
-            />
+            {/* Static Internal Star Points (No Outward Particle Burst) */}
+            {g.stars.map((s) => (
+              <div
+                key={s.id}
+                style={{
+                  '--star-op': s.opacity,
+                  left: `calc(50% + ${s.x}px)`,
+                  top: `calc(50% + ${s.y}px)`,
+                  width: `${s.size}px`,
+                  height: `${s.size}px`,
+                  animation: `starPointTwinkle 1200ms ease-in-out ${s.twinkleDelay}ms infinite`,
+                }}
+                className={`absolute rounded-full pointer-events-none -translate-x-1/2 -translate-y-1/2 ${s.color} ${s.shadow}`}
+              />
+            ))}
           </div>
-
-          {/* 4 to 6 Faint Star Particles */}
-          {g.particles.map((p) => (
-            <div
-              key={p.id}
-              style={{
-                '--p-dx': `${p.dx}px`,
-                '--p-dy': `${p.dy}px`,
-                '--p-op': p.opacity,
-                left: '50%',
-                top: '50%',
-                width: `${p.size}px`,
-                height: `${p.size}px`,
-                animation: 'starParticleDrift 1400ms ease-out forwards',
-              }}
-              className="absolute rounded-full bg-slate-100 shadow-[0_0_2px_#ffffff] pointer-events-none"
-            />
-          ))}
         </div>
       ))}
     </div>
