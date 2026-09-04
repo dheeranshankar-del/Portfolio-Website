@@ -5,6 +5,68 @@ import { personalInfo } from '../data/portfolioData';
 import ScrambleName from './ScrambleName';
 import { assetPath } from '../utils/assetPath';
 
+/* Micro Easter Egg: Subtle single-burst electrical shock on letter 'i' in 'Electrical' */
+function ElectricalShockLetter({ char, trigger }) {
+  const [animating, setAnimating] = useState(false);
+  const [hasTriggered, setHasTriggered] = useState(false);
+
+  useEffect(() => {
+    if (!trigger || hasTriggered) return;
+
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReduced) return;
+
+    setHasTriggered(true);
+    setAnimating(true);
+
+    const timer = setTimeout(() => {
+      setAnimating(false);
+    }, 420);
+
+    return () => clearTimeout(timer);
+  }, [trigger, hasTriggered]);
+
+  if (!animating) {
+    return <span>{char}</span>;
+  }
+
+  return (
+    <span className="relative inline-block select-none">
+      {/* Micro Lightning Bolt SVG */}
+      <svg
+        className="absolute -top-3.5 left-1/2 -translate-x-1/2 w-2.5 h-4 pointer-events-none z-20 animate-[elecBolt_380ms_ease-out_forwards]"
+        viewBox="0 0 10 18"
+        fill="none"
+      >
+        <path
+          d="M 6 0 L 3 7 L 7 8 L 3 16"
+          stroke="#38BDF8"
+          strokeWidth="1.2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="drop-shadow-[0_0_2px_#38BDF8]"
+        />
+        <path
+          d="M 6 0 L 3 7 L 7 8 L 3 16"
+          stroke="#FFFFFF"
+          strokeWidth="0.6"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+
+      {/* Micro Sparks */}
+      <span className="absolute -top-1 -left-1 w-1 h-1 rounded-full bg-[#E0F2FE] shadow-[0_0_3px_#38BDF8] animate-[elecSparkL_350ms_ease-out_forwards] pointer-events-none" />
+      <span className="absolute -bottom-0.5 -right-1 w-0.5 h-0.5 rounded-full bg-[#FFFFFF] shadow-[0_0_3px_#60A5FA] animate-[elecSparkR_350ms_ease-out_forwards] pointer-events-none" />
+
+      {/* Shook/Flashed Letter 'i' */}
+      <span className="inline-block animate-[elecJitter_400ms_ease-out_forwards] text-[#F0F9FF] [text-shadow:0_0_4px_rgba(56,189,248,0.9)] font-semibold">
+        {char}
+      </span>
+    </span>
+  );
+}
+
 export default function InfoSection() {
   const sectionRef = useRef(null);
   const [isInView, setIsInView] = useState(false);
@@ -32,6 +94,35 @@ export default function InfoSection() {
       id="about-section"
       className="py-24 sm:py-32 px-6 max-w-[700px] mx-auto z-10 relative scroll-mt-20 text-left overflow-hidden rounded-3xl"
     >
+      {/* Keyframe Animations for Electrical Shock Easter Egg */}
+      <style>{`
+        @keyframes elecBolt {
+          0% { opacity: 0; transform: translate(-50%, -4px) scale(0.6); }
+          20% { opacity: 1; transform: translate(-50%, 0) scale(1); }
+          55% { opacity: 0.9; transform: translate(-50%, 1px) scale(1); }
+          100% { opacity: 0; transform: translate(-50%, 2px) scale(0.3); }
+        }
+        @keyframes elecSparkL {
+          0% { opacity: 0; transform: translate(0, 0) scale(0); }
+          30% { opacity: 1; transform: translate(-3px, -2px) scale(1); }
+          100% { opacity: 0; transform: translate(-6px, -4px) scale(0.2); }
+        }
+        @keyframes elecSparkR {
+          0% { opacity: 0; transform: translate(0, 0) scale(0); }
+          30% { opacity: 1; transform: translate(3px, 2px) scale(1); }
+          100% { opacity: 0; transform: translate(6px, 4px) scale(0.2); }
+        }
+        @keyframes elecJitter {
+          0% { transform: translate(0, 0); color: #FFFFFF; }
+          15% { transform: translate(1.5px, -1px); color: #E0F2FE; }
+          30% { transform: translate(-1px, 1.5px); color: #38BDF8; }
+          45% { transform: translate(1px, 1px); color: #BAE6FD; }
+          60% { transform: translate(-0.5px, -0.5px); color: #F0F9FF; }
+          75% { transform: translate(0.5px, 0px); }
+          100% { transform: translate(0, 0); color: inherit; }
+        }
+      `}</style>
+
       {/* Faint Background Diagonal Trailing Accent Line */}
       <div 
         className="absolute -top-12 -left-16 w-[450px] h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent transform -rotate-12 pointer-events-none z-0" 
@@ -46,7 +137,7 @@ export default function InfoSection() {
             <ScrambleName text="Dheeran Shankar" isInView={isInView} />
           </h2>
           <div className="text-[16px] sm:text-[18px] font-medium text-white/80 tracking-normal flex items-center flex-wrap gap-y-1">
-            <span>Electrical Engineering</span>
+            <span>Electr<ElectricalShockLetter char="i" trigger={isInView} />cal Engineering</span>
             <span className="font-semibold text-white ml-1.5 flex items-center gap-1.5">
               @
               <img
