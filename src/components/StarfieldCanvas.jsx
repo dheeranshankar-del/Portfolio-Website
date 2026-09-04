@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import { assetPath } from '../utils/assetPath';
 
 export default function StarfieldCanvas() {
   const canvasRef = useRef(null);
@@ -171,8 +172,7 @@ export default function StarfieldCanvas() {
       mouseX += (targetMouseX - mouseX) * 0.045;
       mouseY += (targetMouseY - mouseY) * 0.045;
 
-      ctx.fillStyle = '#000000';
-      ctx.fillRect(0, 0, width, height);
+      ctx.clearRect(0, 0, width, height);
 
       // Render Astrophotography Background Stars
       stars.forEach((star) => {
@@ -273,9 +273,25 @@ export default function StarfieldCanvas() {
   }, []);
 
   return (
-    <canvas
-      ref={canvasRef}
-      className="fixed inset-0 pointer-events-none z-0"
-    />
+    <>
+      <div
+        className="fixed inset-0 pointer-events-none z-0 bg-black"
+        style={{
+          backgroundImage: `
+            radial-gradient(circle at 50% 45%, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.78) 64%, rgba(0, 0, 0, 0.94) 100%),
+            linear-gradient(180deg, rgba(0, 0, 0, 0.50), rgba(0, 0, 0, 0.64)),
+            url(${assetPath('/outer-space-background.jpg')})
+          `,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center center',
+          backgroundRepeat: 'no-repeat'
+        }}
+        aria-hidden="true"
+      />
+      <canvas
+        ref={canvasRef}
+        className="fixed inset-0 pointer-events-none z-0"
+      />
+    </>
   );
 }
