@@ -267,19 +267,10 @@ function EditorialProjectSection({ project }) {
 
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center mt-8 project-media">
-              {/* Left Column (5 Cols on Desktop): Animated Telemetry Data Pipeline */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center mt-10 project-media">
+              {/* Left Column (5 Cols on Desktop): Apple-Style Storytelling Narrative */}
               <div className="lg:col-span-5 flex flex-col justify-center order-2 lg:order-1">
-                <div className="p-5 rounded-2xl bg-white/[0.02] border border-white/[0.08] backdrop-blur-sm shadow-xl">
-                  <div className="text-xs font-mono text-cyan-400/90 font-bold tracking-wider uppercase mb-4 flex items-center justify-between border-b border-white/[0.08] pb-3">
-                    <span className="flex items-center gap-2">
-                      <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
-                      <span>Telemetry Pipeline</span>
-                    </span>
-                    <span className="text-[10px] font-mono text-white/40">UDP / 100Hz</span>
-                  </div>
-                  <TelemetryPipelineGraphic isVisible={isVisible} />
-                </div>
+                <TelemetryAppleStoryline isVisible={isVisible} />
               </div>
 
               {/* Right Column (7 Cols on Desktop): Vertical Demo Video */}
@@ -287,7 +278,7 @@ function EditorialProjectSection({ project }) {
                 <div 
                   onMouseEnter={() => setVideoHover(true)}
                   onMouseLeave={() => setVideoHover(false)}
-                  className="project-video-wrap relative group cursor-default"
+                  className="project-video-wrap relative group cursor-default max-w-sm lg:max-w-md w-full"
                 >
                   <video
                     ref={videoRef}
@@ -312,77 +303,86 @@ function EditorialProjectSection({ project }) {
   );
 }
 
-/* Sub-Component: Telemetry Architecture Data Pipeline Graphic */
-function TelemetryPipelineGraphic({ isVisible }) {
+/* Sub-Component: Apple-Style Storytelling Telemetry Flow */
+function TelemetryAppleStoryline({ isVisible }) {
+  const [activeIndex, setActiveIndex] = useState(0);
+
   const steps = [
     {
-      num: "01",
-      title: "IMU SENSOR",
-      detail: "BNO055 · 100 Hz",
-      sub: "Low-level orientation DAQ"
+      title: "IMU sensing",
+      spec: "BNO055 · 100 Hz",
+      desc: "Captures orientation and acceleration"
     },
     {
-      num: "02",
-      title: "DATA ACQUISITION",
-      detail: "Arduino · C/C++",
-      sub: "Firmware UDP bridge"
+      title: "Data acquisition",
+      spec: "Arduino · C/C++",
+      desc: "Processes and packages sensor data"
     },
     {
-      num: "03",
-      title: "UDP TRANSPORT",
-      detail: "Low-Latency Net",
-      sub: "Real-time socket stream"
+      title: "UDP transport",
+      spec: "Low-latency networking",
+      desc: "Streams telemetry to the ground station"
     },
     {
-      num: "04",
-      title: "GROUND STATION",
-      detail: "Python · PyQt6",
-      sub: "Live 3D orientation UI"
+      title: "Ground station",
+      spec: "Python · PyQt6",
+      desc: "Visualizes live orientation and system data"
     }
   ];
 
+  // Auto-cycle active highlight smoothly every 2.8s once visible
+  useEffect(() => {
+    if (!isVisible) return;
+    const interval = setInterval(() => {
+      setActiveIndex((prev) => (prev + 1) % steps.length);
+    }, 2800);
+    return () => clearInterval(interval);
+  }, [isVisible, steps.length]);
+
   return (
-    <div className="relative pl-2 sm:pl-3 py-1 font-mono">
-      {/* Animated Connecting Vertical Line */}
-      <div 
-        className={`absolute left-[19px] sm:left-[21px] top-5 bottom-5 w-[2px] bg-gradient-to-b from-cyan-500/90 via-indigo-500/70 to-cyan-400/90 transition-all duration-1000 ${
-          isVisible ? 'opacity-100 scale-y-100' : 'opacity-0 scale-y-0'
-        } origin-top`}
-      />
+    <div className="py-2 space-y-6">
+      <div className="text-xs font-mono font-semibold tracking-wider text-white/40 uppercase">
+        How it works
+      </div>
 
-      {/* Sequential Steps */}
-      <div className="space-y-5">
-        {steps.map((step, idx) => (
-          <div
-            key={step.num}
-            style={{ transitionDelay: `${idx * 200 + 150}ms` }}
-            className={`relative flex items-center gap-3.5 transition-all duration-700 transform ${
-              isVisible
-                ? 'opacity-100 translate-y-0'
-                : 'opacity-0 -translate-y-3'
-            }`}
-          >
-            {/* Step Node Marker */}
-            <div className="relative z-10 flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-[#07090e] border border-cyan-500/50 text-cyan-400 text-xs font-bold font-mono shadow-[0_0_12px_rgba(6,182,212,0.25)] shrink-0">
-              {step.num}
-            </div>
+      <div className="relative pl-6 border-l border-white/10 space-y-7">
+        {steps.map((step, idx) => {
+          const isActive = activeIndex === idx;
 
-            {/* Step Text Readout */}
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center justify-between gap-2">
-                <span className="text-xs font-bold tracking-wider text-white uppercase font-mono truncate">
+          return (
+            <div
+              key={step.title}
+              onClick={() => setActiveIndex(idx)}
+              style={{ transitionDelay: `${idx * 150}ms` }}
+              className={`relative cursor-pointer group transition-all duration-500 transform ${
+                isVisible
+                  ? 'opacity-100 translate-y-0'
+                  : 'opacity-0 translate-y-2'
+              }`}
+            >
+              {/* Active Step White Indicator Bar */}
+              <div 
+                className={`absolute -left-[25px] top-0 bottom-0 w-[2px] bg-white transition-all duration-500 ${
+                  isActive ? 'opacity-100 scale-y-100' : 'opacity-0 scale-y-0'
+                }`}
+              />
+
+              <div className={`transition-all duration-500 space-y-1 ${
+                isActive ? 'opacity-100 translate-x-1' : 'opacity-40 hover:opacity-75'
+              }`}>
+                <h4 className="text-base sm:text-lg font-semibold font-heading text-white tracking-tight">
                   {step.title}
-                </span>
-                <span className="text-[10px] font-mono text-cyan-300 bg-cyan-950/60 border border-cyan-500/40 px-1.5 py-0.5 rounded shrink-0">
-                  {step.detail}
-                </span>
+                </h4>
+                <div className="text-xs font-mono text-cyan-400/90 font-medium">
+                  {step.spec}
+                </div>
+                <p className="text-xs sm:text-sm text-white/70 font-normal leading-relaxed">
+                  {step.desc}
+                </p>
               </div>
-              <p className="text-[11px] text-white/50 font-mono mt-0.5">
-                {step.sub}
-              </p>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
