@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { projectsData } from '../data/portfolioData';
 import PcbInspectorModal from './PcbInspectorModal';
 import LaneMontageInspectorModal from './LaneMontageInspectorModal';
-import { Maximize2 } from 'lucide-react';
+import { Maximize2, ExternalLink } from 'lucide-react';
 import { assetPath } from '../utils/assetPath';
 
 export default function ProjectsSection({ onSelectProject }) {
@@ -181,19 +181,37 @@ function EditorialProjectSection({ project }) {
                 <span className="font-bold text-white/80">{project.number}</span>
                 <span className="mx-2 text-white/30">·</span>
                 <span className="text-white/75 font-semibold">{project.org}</span>
-                <span className="mx-2 text-white/30">·</span>
-                <span>{project.category}</span>
+                {project.category && (
+                  <>
+                    <span className="mx-2 text-white/30">·</span>
+                    <span>{project.category}</span>
+                  </>
+                )}
               </div>
 
               <h2 className="project-title text-3xl sm:text-4xl md:text-5xl font-extrabold font-heading text-white tracking-tight">
                 {project.title}
               </h2>
 
-              <p className="project-description text-base sm:text-lg text-white/75 leading-relaxed font-normal">
-                {project.shortDesc}
-              </p>
+              {project.highlights ? (
+                <div className="space-y-2.5 py-1">
+                  {project.highlights.map((item, i) => (
+                    <div key={i} className="flex flex-wrap items-baseline gap-2.5 text-sm sm:text-base">
+                      <span className="font-mono text-xs font-bold text-white tracking-wide uppercase px-2 py-0.5 rounded bg-white/[0.06] border border-white/10 shrink-0">
+                        {item.label}
+                      </span>
+                      <span className="text-white/30 text-xs font-mono">—</span>
+                      <span className="text-white/80 font-normal">{item.desc}</span>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="project-description text-base sm:text-lg text-white/75 leading-relaxed font-normal">
+                  {project.shortDesc}
+                </p>
+              )}
 
-              <div className="project-tags flex flex-wrap gap-2 pt-2">
+              <div className="project-tags flex flex-wrap items-center gap-2 pt-2">
                 {project.tech.map((t, idx) => (
                   <span
                     key={idx}
@@ -202,6 +220,17 @@ function EditorialProjectSection({ project }) {
                     {t}
                   </span>
                 ))}
+                {project.githubUrl && (
+                  <a
+                    href={project.githubUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-white/[0.08] hover:bg-white/[0.16] border border-white/[0.18] text-white hover:text-cyan-300 text-xs font-mono font-semibold transition-all ml-1"
+                  >
+                    <span>GitHub</span>
+                    <ExternalLink size={12} className="opacity-80" />
+                  </a>
+                )}
               </div>
             </div>
           </div>
