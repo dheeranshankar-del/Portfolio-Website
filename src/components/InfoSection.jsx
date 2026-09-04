@@ -1,3 +1,10 @@
+import React, { useEffect, useRef, useState } from 'react';
+import { ArrowUpRight, Mail, FileText } from 'lucide-react';
+import { LinkedinIcon, GithubIcon } from './Icons';
+import { personalInfo } from '../data/portfolioData';
+import ScrambleName from './ScrambleName';
+import { assetPath } from '../utils/assetPath';
+
 export default function InfoSection() {
   const sectionRef = useRef(null);
   const electricalIRef = useRef(null);
