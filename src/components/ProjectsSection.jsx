@@ -688,49 +688,49 @@ function RoverProductBreakdown({ image, title, isVisible }) {
       id: "esp32",
       title: "ESP32-C3",
       spec: "32-bit RISC-V MCU",
-      labelPos: { x: 6, y: 18 },
-      lineStart: { x: 21, y: 22 },
-      target: { x: 38, y: 46 }
+      labelPos: { x: 5, y: 18 },
+      lineStart: { x: 20, y: 22 },
+      target: { x: 38, y: 44 }
     },
     {
       id: "arduino",
       title: "Arduino Uno",
       spec: "Secondary microcontroller",
-      labelPos: { x: 6, y: 48 },
-      lineStart: { x: 23, y: 50 },
+      labelPos: { x: 5, y: 46 },
+      lineStart: { x: 22, y: 48 },
       target: { x: 44, y: 52 }
     },
     {
       id: "ultrasonic",
       title: "HC-SR04 Ultrasonic Sensors",
       spec: "Distance & obstacle sensing",
-      labelPos: { x: 6, y: 78 },
-      lineStart: { x: 35, y: 78 },
-      target: { x: 35, y: 64 }
+      labelPos: { x: 5, y: 70 },
+      lineStart: { x: 32, y: 70 },
+      target: { x: 36, y: 68 }
     },
     {
       id: "power",
       title: "18650 Li-ion Battery Pack",
       spec: "2 × 3.7V · 3500mAh",
-      labelPos: { x: 65, y: 18 },
-      lineStart: { x: 63, y: 22 },
+      labelPos: { x: 64, y: 18 },
+      lineStart: { x: 62, y: 22 },
       target: { x: 56, y: 32 }
     },
     {
       id: "motors",
       title: "TB6612FNG Motor Drivers",
       spec: "Dual-channel · 1A/channel",
-      labelPos: { x: 65, y: 48 },
-      lineStart: { x: 63, y: 50 },
-      target: { x: 52, y: 64 }
+      labelPos: { x: 64, y: 48 },
+      lineStart: { x: 62, y: 52 },
+      target: { x: 52, y: 62 }
     },
     {
       id: "wheels",
       title: "Mecanum Wheels",
       spec: "Omnidirectional drive",
-      labelPos: { x: 65, y: 78 },
-      lineStart: { x: 63, y: 78 },
-      target: { x: 60, y: 78 }
+      labelPos: { x: 64, y: 78 },
+      lineStart: { x: 62, y: 78 },
+      target: { x: 58, y: 78 }
     }
   ];
 
@@ -748,18 +748,19 @@ function RoverProductBreakdown({ image, title, isVisible }) {
           className="w-full h-full object-cover block transition-transform duration-700 group-hover:scale-[1.01]"
         />
 
-        {/* Thin High-Contrast Annotation Leader Lines & Endpoint Dots (SVG) */}
+        {/* Clean Dotted Annotation Leader Lines & Endpoint Dots (SVG) */}
         <svg className="absolute inset-0 w-full h-full pointer-events-none z-20">
           {annotations.map((ann, idx) => (
             <React.Fragment key={`svg-ann-${ann.id}`}>
-              {/* Subtle Dark Contrast Backing Line (remains visible on bright photo regions) */}
+              {/* Dotted Line Dark Contrast Backing Shadow */}
               <line
                 x1={`${ann.lineStart.x}%`}
                 y1={`${ann.lineStart.y}%`}
                 x2={`${ann.target.x}%`}
                 y2={`${ann.target.y}%`}
-                stroke="rgba(0, 0, 0, 0.65)"
-                strokeWidth="2.75"
+                stroke="rgba(0, 0, 0, 0.75)"
+                strokeWidth="3.5"
+                strokeDasharray="2 4"
                 strokeLinecap="round"
                 className={`transition-all duration-700 ease-out ${
                   isVisible ? 'opacity-100' : 'opacity-0'
@@ -767,14 +768,15 @@ function RoverProductBreakdown({ image, title, isVisible }) {
                 style={{ transitionDelay: `${idx * 180 + 300}ms` }}
               />
 
-              {/* Elegant Solid White Hairline (1.25px) */}
+              {/* Dotted Leader Line (1.5px, Dotted, High Contrast 85% Opacity) */}
               <line
                 x1={`${ann.lineStart.x}%`}
                 y1={`${ann.lineStart.y}%`}
                 x2={`${ann.target.x}%`}
                 y2={`${ann.target.y}%`}
                 stroke="rgba(255, 255, 255, 0.85)"
-                strokeWidth="1.25"
+                strokeWidth="1.5"
+                strokeDasharray="2 4"
                 strokeLinecap="round"
                 className={`transition-all duration-700 ease-out ${
                   isVisible ? 'opacity-100' : 'opacity-0'
@@ -782,19 +784,19 @@ function RoverProductBreakdown({ image, title, isVisible }) {
                 style={{ transitionDelay: `${idx * 180 + 300}ms` }}
               />
 
-              {/* Endpoint Dot Contrast Shadow */}
+              {/* Hardware Endpoint Dot Shadow */}
               <circle
                 cx={`${ann.target.x}%`}
                 cy={`${ann.target.y}%`}
-                r="3"
-                fill="rgba(0, 0, 0, 0.75)"
+                r="3.5"
+                fill="rgba(0, 0, 0, 0.85)"
                 className={`transition-all duration-700 ease-out ${
                   isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-0'
                 }`}
                 style={{ transitionDelay: `${idx * 180 + 350}ms` }}
               />
 
-              {/* Endpoint Bright White Hairline Dot */}
+              {/* Hardware Endpoint Bright White Circle */}
               <circle
                 cx={`${ann.target.x}%`}
                 cy={`${ann.target.y}%`}
