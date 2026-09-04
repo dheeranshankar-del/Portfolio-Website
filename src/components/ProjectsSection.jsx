@@ -88,8 +88,12 @@ function EditorialProjectSection({ project }) {
                 <span className="font-bold text-white/80">{project.number}</span>
                 <span className="mx-2 text-white/30">·</span>
                 <span className="text-white/75 font-semibold">{project.org}</span>
-                <span className="mx-2 text-white/30">·</span>
-                <span>{project.category}</span>
+                {project.category && (
+                  <>
+                    <span className="mx-2 text-white/30">·</span>
+                    <span>{project.category}</span>
+                  </>
+                )}
               </div>
 
               {/* Project Title */}
@@ -216,8 +220,12 @@ function EditorialProjectSection({ project }) {
                 <span className="font-bold text-white/80">{project.number}</span>
                 <span className="text-white/30">·</span>
                 <span className="text-white/75 font-semibold">{project.org}</span>
-                <span className="text-white/30">·</span>
-                <span>{project.category}</span>
+                {project.category && (
+                  <>
+                    <span className="text-white/30">·</span>
+                    <span>{project.category}</span>
+                  </>
+                )}
               </div>
 
               <h2 className="project-title text-3xl sm:text-5xl font-extrabold font-heading text-white tracking-tight inline-block">
