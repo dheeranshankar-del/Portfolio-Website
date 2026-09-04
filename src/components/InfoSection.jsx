@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { ArrowUpRight, Mail, FileText } from 'lucide-react';
 import { LinkedinIcon, GithubIcon } from './Icons';
 import { personalInfo } from '../data/portfolioData';
@@ -6,8 +6,29 @@ import ScrambleName from './ScrambleName';
 import { assetPath } from '../utils/assetPath';
 
 export default function InfoSection() {
+  const sectionRef = useRef(null);
+  const [isInView, setIsInView] = useState(false);
+
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsInView(true);
+        }
+      },
+      { threshold: 0.15 }
+    );
+
+    observer.observe(section);
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <section
+      ref={sectionRef}
       id="about-section"
       className="py-24 sm:py-32 px-6 max-w-[700px] mx-auto z-10 relative scroll-mt-20 text-left overflow-hidden rounded-3xl"
     >
@@ -22,7 +43,7 @@ export default function InfoSection() {
         {/* Top: Name + Subheading matching exact Hero Subtitle Typography */}
         <div className="space-y-2">
           <h2 className="text-2xl sm:text-3xl font-bold font-heading text-white tracking-tight">
-            <ScrambleName text="Dheeran Shankar" />
+            <ScrambleName text="Dheeran Shankar" isInView={isInView} />
           </h2>
           <div className="text-[16px] sm:text-[18px] font-medium text-white/80 tracking-normal flex items-center flex-wrap gap-y-1">
             <span>Electrical Engineering</span>

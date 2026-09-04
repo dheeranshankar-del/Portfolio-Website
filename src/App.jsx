@@ -12,6 +12,7 @@ export default function App() {
   const [activeTab, setActiveTab] = useState('projects');
   const [selectedProject, setSelectedProject] = useState(null);
   const [isMissionControlOpen, setIsMissionControlOpen] = useState(false);
+  const [aboutGlitchTrigger, setAboutGlitchTrigger] = useState(1);
 
   const handleOpenProjectModal = (project) => {
     if (project.hasMissionControl || project.isSpecial) {
@@ -23,6 +24,9 @@ export default function App() {
 
   const handleTabChange = (tabId) => {
     setActiveTab(tabId);
+    if (tabId === 'about') {
+      setAboutGlitchTrigger((trigger) => trigger + 1);
+    }
     const targetEl = document.getElementById(`${tabId}-section`);
     if (targetEl) {
       targetEl.scrollIntoView({ behavior: 'smooth' });
@@ -54,7 +58,7 @@ export default function App() {
         </section>
 
         {/* About Section */}
-        <InfoSection />
+        <InfoSection glitchTrigger={aboutGlitchTrigger} />
 
       </main>
 
