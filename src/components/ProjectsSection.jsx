@@ -762,10 +762,10 @@ function RoverProductBreakdown({ image, title, isVisible }) {
                 strokeWidth="1.5"
                 strokeDasharray="3 4"
                 strokeLinecap="round"
-                className={`transition-all duration-700 ease-out ${
+                className={`transition-all duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)] ${
                   isVisible ? 'opacity-100' : 'opacity-0'
                 }`}
-                style={{ transitionDelay: `${idx * 180 + 300}ms` }}
+                style={{ transitionDelay: `${idx * 120 + 260}ms` }}
               />
 
               {/* Endpoint Bright Silver Circle directly on Hardware Component */}
@@ -774,10 +774,13 @@ function RoverProductBreakdown({ image, title, isVisible }) {
                 cy={`${ann.target.y}%`}
                 r="3"
                 fill="#F5F5F7"
-                className={`transition-all duration-700 ease-out ${
+                className={`transition-all duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${
                   isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-0'
                 }`}
-                style={{ transitionDelay: `${idx * 180 + 350}ms` }}
+                style={{
+                  transitionDelay: `${idx * 120 + 200}ms`,
+                  transformOrigin: `${ann.target.x}% ${ann.target.y}%`
+                }}
               />
             </React.Fragment>
           ))}
@@ -792,13 +795,13 @@ function RoverProductBreakdown({ image, title, isVisible }) {
               style={{
                 top: `${ann.labelPos.y}%`,
                 left: `${ann.labelPos.x}%`,
-                transitionDelay: `${idx * 180 + 400}ms`,
+                transitionDelay: `${idx * 120 + 320}ms`,
                 textShadow: isExtraContrastNeeded
                   ? '0 1px 3px #000000, 0 2px 8px rgba(0, 0, 0, 0.98), 0 0 14px rgba(0, 0, 0, 0.9), 0 0 24px rgba(0, 0, 0, 0.7)'
                   : '0 1px 3px #000000, 0 2px 8px rgba(0, 0, 0, 0.9), 0 0 12px rgba(0, 0, 0, 0.6)'
               }}
-              className={`absolute transform -translate-y-1/2 z-30 pointer-events-none space-y-0.5 text-left transition-all duration-700 ${
-                isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'
+              className={`absolute transform -translate-y-1/2 z-30 pointer-events-none space-y-0.5 text-left transition-all duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+                isVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-2 scale-[0.98]'
               }`}
             >
               <div className="text-sm sm:text-base font-semibold font-heading text-[#F2F2F2] tracking-tight whitespace-nowrap">
