@@ -17,68 +17,75 @@ export default function ClickGalaxyOverlay() {
       const x = e.clientX;
       const y = e.clientY;
 
-      // Base rotation and scale variation (55px to 80px target size)
+      // Base rotation and scale (110px to 140px size)
       const baseRotation = Math.floor(Math.random() * 360);
-      const scale = 0.85 + Math.random() * 0.3; // 0.85 to 1.15
+      const scale = 0.9 + Math.random() * 0.3; // 0.9 to 1.2
 
-      // Asymmetrical cloud shape offset layers (mottled dusty periwinkle/blue clumps)
-      const cloudNodes = Array.from({ length: 12 }).map((_, idx) => {
-        const angle = (idx * (360 / 12)) + (Math.random() * 40 - 20);
-        const rad = (angle * Math.PI) / 180;
-        const dist = 4 + Math.random() * 22; // 4px to 26px radius
-        const size = 16 + Math.random() * 20; // 16px to 36px node size
+      // Generate 2 logarithmic spiral arm dust clouds
+      const cloudArmNodes = [];
+      const numNodes = 24;
+      for (let i = 0; i < numNodes; i++) {
+        const armIndex = i % 2; // 2 spiral arms
+        const t = (i / numNodes) * Math.PI * 2.2;
+        const armOffset = armIndex * Math.PI;
+        const radius = 6 + t * 7; // Expanding spiral radius
+        const angle = t + armOffset + (Math.random() * 0.3 - 0.15);
 
-        // Palette sampled from reference photo: periwinkle, slate-blue, dusty cyan
-        const colorHue = idx % 3 === 0 
-          ? 'rgba(112, 144, 192, 0.35)' 
-          : idx % 3 === 1 
-          ? 'rgba(91, 123, 154, 0.30)' 
-          : 'rgba(138, 158, 167, 0.25)';
+        const nodeX = Math.cos(angle) * radius;
+        const nodeY = Math.sin(angle) * radius;
+        const size = 20 + Math.random() * 24;
 
-        return {
-          id: idx,
-          x: Math.cos(rad) * dist,
-          y: Math.sin(rad) * dist,
+        // Vivid dusty cyan / periwinkle blue hues matching astronomical photo
+        const colorHue = armIndex === 0
+          ? 'rgba(125, 175, 235, 0.55)'
+          : 'rgba(95, 140, 210, 0.50)';
+
+        cloudArmNodes.push({
+          id: i,
+          x: nodeX,
+          y: nodeY,
           size,
-          background: `radial-gradient(circle at 50% 50%, ${colorHue} 0%, rgba(30, 41, 59, 0.15) 55%, transparent 85%)`,
-          borderRadius: `${35 + Math.random() * 30}% ${35 + Math.random() * 30}% ${35 + Math.random() * 30}% ${35 + Math.random() * 30}%`,
-          blur: 5 + Math.floor(Math.random() * 5), // 5px to 9px blur
-        };
-      });
+          background: `radial-gradient(circle at 50% 50%, ${colorHue} 0%, rgba(45, 75, 125, 0.35) 45%, transparent 80%)`,
+          borderRadius: `${40 + Math.random() * 20}% ${40 + Math.random() * 20}% ${40 + Math.random() * 20}% ${40 + Math.random() * 20}%`,
+          blur: 4 + Math.floor(Math.random() * 4),
+        });
+      }
 
-      // Generate yellow-gold & cool-white star points matching reference photo
-      const starCount = 8 + Math.floor(Math.random() * 6);
+      // Generate 25 to 35 crisp, bright star points (yellow-gold core stars & bright white outer stars)
+      const starCount = 28 + Math.floor(Math.random() * 8);
       const stars = Array.from({ length: starCount }).map((_, idx) => {
+        const isCoreStar = idx < 8;
         const angle = Math.random() * Math.PI * 2;
-        const dist = Math.random() * 32; // up to 32px spread
-        const size = 1.0 + Math.random() * 1.6; // 1.0px to 2.6px
-        
-        // Reference photo has prominent yellow-gold star points peppered around
-        const isYellowStar = idx < 4; // 3-4 yellow stars per galaxy
+        const radius = isCoreStar ? Math.random() * 18 : Math.random() * 52;
+        const size = isCoreStar ? 1.8 + Math.random() * 1.8 : 1.0 + Math.random() * 1.6;
+
+        const isYellowStar = idx % 3 === 0 || isCoreStar; // ~33% bright yellow-gold stars
 
         return {
           id: idx,
-          x: Math.cos(angle) * dist,
-          y: Math.sin(angle) * dist,
+          x: Math.cos(angle) * radius,
+          y: Math.sin(angle) * radius,
           size,
-          color: isYellowStar ? 'bg-amber-400' : 'bg-slate-100/90',
-          shadow: isYellowStar ? 'shadow-[0_0_3px_#facc15]' : 'shadow-[0_0_2px_rgba(255,255,255,0.8)]',
-          opacity: isYellowStar ? 0.85 : 0.4 + Math.random() * 0.4,
-          twinkleDelay: Math.floor(Math.random() * 600),
+          color: isYellowStar ? 'bg-amber-300' : 'bg-white',
+          shadow: isYellowStar
+            ? 'shadow-[0_0_5px_#fde047,0_0_10px_#eab308]'
+            : 'shadow-[0_0_4px_#ffffff,0_0_8px_#38bdf8]',
+          opacity: 0.75 + Math.random() * 0.25,
+          twinkleDelay: Math.floor(Math.random() * 800),
         };
       });
 
-      const newGalaxy = { id, x, y, baseRotation, scale, cloudNodes, stars };
+      const newGalaxy = { id, x, y, baseRotation, scale, cloudArmNodes, stars };
 
       setGalaxies((prev) => {
-        const updated = prev.length >= 5 ? prev.slice(prev.length - 4) : prev;
+        const updated = prev.length >= 6 ? prev.slice(prev.length - 5) : prev;
         return [...updated, newGalaxy];
       });
 
-      // Remove after 2000ms animation finishes
+      // Remove after 2200ms animation finishes
       setTimeout(() => {
         setGalaxies((prev) => prev.filter((g) => g.id !== id));
-      }, 2000);
+      }, 2200);
     };
 
     window.addEventListener('click', handleClick, { capture: true });
@@ -93,31 +100,31 @@ export default function ClickGalaxyOverlay() {
   return (
     <div className="pointer-events-none fixed inset-0 z-[99999] overflow-hidden select-none" aria-hidden="true">
       <style>{`
-        @keyframes astronomicalGalaxyLifecycle {
+        @keyframes realGalaxyLifecycle {
           0% {
-            transform: translate(-50%, -50%) scale(0.3) rotate(0deg);
+            transform: translate(-50%, -50%) scale(0.2) rotate(0deg);
             opacity: 0;
           }
           15% {
-            opacity: 0.15;
+            opacity: 0.85;
           }
-          35% {
-            transform: translate(-50%, -50%) scale(0.85) rotate(3deg);
-            opacity: 0.32;
+          40% {
+            transform: translate(-50%, -50%) scale(0.95) rotate(6deg);
+            opacity: 0.90;
           }
-          60% {
-            transform: translate(-50%, -50%) scale(1.02) rotate(7deg);
-            opacity: 0.28;
+          65% {
+            transform: translate(-50%, -50%) scale(1.05) rotate(14deg);
+            opacity: 0.75;
           }
           100% {
-            transform: translate(-50%, -50%) scale(1.22) rotate(14deg);
+            transform: translate(-50%, -50%) scale(1.25) rotate(22deg);
             opacity: 0;
           }
         }
 
-        @keyframes starPointTwinkle {
-          0%, 100% { opacity: var(--star-op); }
-          50% { opacity: calc(var(--star-op) * 0.45); }
+        @keyframes realStarTwinkle {
+          0%, 100% { opacity: var(--star-op); transform: translate(-50%, -50%) scale(1); }
+          50% { opacity: calc(var(--star-op) * 0.5); transform: translate(-50%, -50%) scale(0.75); }
         }
       `}</style>
 
@@ -127,28 +134,28 @@ export default function ClickGalaxyOverlay() {
           style={{
             left: `${g.x}px`,
             top: `${g.y}px`,
-            animation: 'astronomicalGalaxyLifecycle 2000ms cubic-bezier(0.22, 1, 0.36, 1) forwards',
+            animation: 'realGalaxyLifecycle 2200ms cubic-bezier(0.16, 1, 0.3, 1) forwards',
             transformOrigin: 'center center',
           }}
-          className="absolute pointer-events-none w-[80px] h-[80px]"
+          className="absolute pointer-events-none w-[130px] h-[130px]"
         >
-          {/* Main Rotating Container for Irregular Cloud & Star Layers */}
+          {/* Main Rotating Container */}
           <div
             style={{
               transform: `rotate(${g.baseRotation}deg) scale(${g.scale})`,
             }}
             className="w-full h-full relative pointer-events-none"
           >
-            {/* Center Pale Gold / Warm Core Glow (Sampled from Reference Core) */}
+            {/* Bright Warm Gold Galactic Core Glow */}
             <div
               style={{
-                background: 'radial-gradient(circle at 50% 50%, rgba(212, 175, 55, 0.35) 0%, rgba(197, 160, 89, 0.18) 40%, transparent 80%)',
+                background: 'radial-gradient(circle at 50% 50%, rgba(254, 240, 138, 0.85) 0%, rgba(234, 179, 8, 0.55) 30%, rgba(180, 83, 9, 0.30) 55%, transparent 80%)',
               }}
-              className="absolute inset-2 rounded-full blur-[8px] pointer-events-none"
+              className="absolute inset-4 rounded-full blur-[6px] pointer-events-none"
             />
 
-            {/* Mottled Periwinkle & Slate-Blue Cloud Clump Nodes */}
-            {g.cloudNodes.map((node) => (
+            {/* Dusty Cyan & Periwinkle Spiral Arm Clouds */}
+            {g.cloudArmNodes.map((node) => (
               <div
                 key={node.id}
                 style={{
@@ -164,7 +171,7 @@ export default function ClickGalaxyOverlay() {
               />
             ))}
 
-            {/* Yellow-Gold & Cool-White Star Points */}
+            {/* Crisp Bright Yellow-Gold & White Star Points */}
             {g.stars.map((s) => (
               <div
                 key={s.id}
@@ -174,9 +181,9 @@ export default function ClickGalaxyOverlay() {
                   top: `calc(50% + ${s.y}px)`,
                   width: `${s.size}px`,
                   height: `${s.size}px`,
-                  animation: `starPointTwinkle 1200ms ease-in-out ${s.twinkleDelay}ms infinite`,
+                  animation: `realStarTwinkle 1100ms ease-in-out ${s.twinkleDelay}ms infinite`,
                 }}
-                className={`absolute rounded-full pointer-events-none -translate-x-1/2 -translate-y-1/2 ${s.color} ${s.shadow}`}
+                className={`absolute rounded-full pointer-events-none ${s.color} ${s.shadow}`}
               />
             ))}
           </div>
