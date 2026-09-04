@@ -265,36 +265,43 @@ function EditorialProjectSection({ project }) {
                 {project.shortDesc}
               </p>
 
-              <div className="project-tags flex flex-wrap gap-2 pt-2">
-                {project.tech.map((t, idx) => (
-                  <span
-                    key={idx}
-                    className="px-3 py-1 rounded-md bg-white/[0.05] border border-white/[0.10] text-xs font-mono text-white/80"
-                  >
-                    {t}
-                  </span>
-                ))}
-              </div>
             </div>
 
-            <div className="flex justify-center items-center mt-8 project-media">
-              <div 
-                onMouseEnter={() => setVideoHover(true)}
-                onMouseLeave={() => setVideoHover(false)}
-                className="project-video-wrap relative group cursor-default"
-              >
-                <video
-                  ref={videoRef}
-                  src={project.hardwareVideo}
-                  autoPlay
-                  muted
-                  loop
-                  playsInline
-                  preload="metadata"
-                />
-                
-                <div className={`transition-opacity duration-200 ${videoHover ? 'opacity-100' : 'opacity-0'}`}>
-                  <VideoScrubber videoRef={videoRef} />
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center mt-8 project-media">
+              {/* Left Column (5 Cols on Desktop): Animated Telemetry Data Pipeline */}
+              <div className="lg:col-span-5 flex flex-col justify-center order-2 lg:order-1">
+                <div className="p-5 rounded-2xl bg-white/[0.02] border border-white/[0.08] backdrop-blur-sm shadow-xl">
+                  <div className="text-xs font-mono text-cyan-400/90 font-bold tracking-wider uppercase mb-4 flex items-center justify-between border-b border-white/[0.08] pb-3">
+                    <span className="flex items-center gap-2">
+                      <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+                      <span>Telemetry Pipeline</span>
+                    </span>
+                    <span className="text-[10px] font-mono text-white/40">UDP / 100Hz</span>
+                  </div>
+                  <TelemetryPipelineGraphic isVisible={isVisible} />
+                </div>
+              </div>
+
+              {/* Right Column (7 Cols on Desktop): Vertical Demo Video */}
+              <div className="lg:col-span-7 flex justify-center items-center order-1 lg:order-2">
+                <div 
+                  onMouseEnter={() => setVideoHover(true)}
+                  onMouseLeave={() => setVideoHover(false)}
+                  className="project-video-wrap relative group cursor-default"
+                >
+                  <video
+                    ref={videoRef}
+                    src={project.hardwareVideo}
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    preload="metadata"
+                  />
+                  
+                  <div className={`transition-opacity duration-200 ${videoHover ? 'opacity-100' : 'opacity-0'}`}>
+                    <VideoScrubber videoRef={videoRef} />
+                  </div>
                 </div>
               </div>
             </div>
@@ -302,6 +309,82 @@ function EditorialProjectSection({ project }) {
         )}
       </div>
     </section>
+  );
+}
+
+/* Sub-Component: Telemetry Architecture Data Pipeline Graphic */
+function TelemetryPipelineGraphic({ isVisible }) {
+  const steps = [
+    {
+      num: "01",
+      title: "IMU SENSOR",
+      detail: "BNO055 · 100 Hz",
+      sub: "Low-level orientation DAQ"
+    },
+    {
+      num: "02",
+      title: "DATA ACQUISITION",
+      detail: "Arduino · C/C++",
+      sub: "Firmware UDP bridge"
+    },
+    {
+      num: "03",
+      title: "UDP TRANSPORT",
+      detail: "Low-Latency Net",
+      sub: "Real-time socket stream"
+    },
+    {
+      num: "04",
+      title: "GROUND STATION",
+      detail: "Python · PyQt6",
+      sub: "Live 3D orientation UI"
+    }
+  ];
+
+  return (
+    <div className="relative pl-2 sm:pl-3 py-1 font-mono">
+      {/* Animated Connecting Vertical Line */}
+      <div 
+        className={`absolute left-[19px] sm:left-[21px] top-5 bottom-5 w-[2px] bg-gradient-to-b from-cyan-500/90 via-indigo-500/70 to-cyan-400/90 transition-all duration-1000 ${
+          isVisible ? 'opacity-100 scale-y-100' : 'opacity-0 scale-y-0'
+        } origin-top`}
+      />
+
+      {/* Sequential Steps */}
+      <div className="space-y-5">
+        {steps.map((step, idx) => (
+          <div
+            key={step.num}
+            style={{ transitionDelay: `${idx * 200 + 150}ms` }}
+            className={`relative flex items-center gap-3.5 transition-all duration-700 transform ${
+              isVisible
+                ? 'opacity-100 translate-y-0'
+                : 'opacity-0 -translate-y-3'
+            }`}
+          >
+            {/* Step Node Marker */}
+            <div className="relative z-10 flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-[#07090e] border border-cyan-500/50 text-cyan-400 text-xs font-bold font-mono shadow-[0_0_12px_rgba(6,182,212,0.25)] shrink-0">
+              {step.num}
+            </div>
+
+            {/* Step Text Readout */}
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center justify-between gap-2">
+                <span className="text-xs font-bold tracking-wider text-white uppercase font-mono truncate">
+                  {step.title}
+                </span>
+                <span className="text-[10px] font-mono text-cyan-300 bg-cyan-950/60 border border-cyan-500/40 px-1.5 py-0.5 rounded shrink-0">
+                  {step.detail}
+                </span>
+              </div>
+              <p className="text-[11px] text-white/50 font-mono mt-0.5">
+                {step.sub}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
 
