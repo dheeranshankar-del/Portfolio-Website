@@ -31,7 +31,7 @@ function EditorialProjectSection({ project }) {
     setPcbAutoHighlight(true);
     setTimeout(() => {
       setPcbAutoHighlight(false);
-    }, 1750); // Show PCB callout labels for 1.75 seconds
+    }, 2000); // Show PCB callout labels for 2 seconds
   };
 
   const isAlternate = project.layout === 'alternate';
