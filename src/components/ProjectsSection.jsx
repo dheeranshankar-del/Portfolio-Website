@@ -273,18 +273,18 @@ function EditorialProjectSection({ project }) {
 
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center mt-4 sm:mt-6 project-media">
-              {/* Left Column (6 Cols on Desktop): Apple-Style Storytelling Narrative */}
-              <div className="lg:col-span-6 flex flex-col justify-center order-2 lg:order-1 max-w-xl">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center mt-6 sm:mt-8 project-media max-w-5xl mx-auto">
+              {/* Left Column (5 Cols on Desktop): Apple-Style Storytelling Narrative */}
+              <div className="lg:col-span-5 flex flex-col justify-center order-2 lg:order-1">
                 <TelemetryAppleStoryline isVisible={isVisible} />
               </div>
 
-              {/* Right Column (6 Cols on Desktop): Larger Vertical Demo Video */}
-              <div className="lg:col-span-6 flex justify-center items-center order-1 lg:order-2">
+              {/* Right Column (7 Cols on Desktop): Larger Vertical Demo Video */}
+              <div className="lg:col-span-7 flex justify-center lg:justify-start items-center order-1 lg:order-2 lg:pl-4">
                 <div 
                   onMouseEnter={() => setVideoHover(true)}
                   onMouseLeave={() => setVideoHover(false)}
-                  className="project-video-wrap relative group cursor-default max-w-md lg:max-w-lg w-full"
+                  className="project-video-wrap relative group cursor-default"
                 >
                   <video
                     ref={videoRef}

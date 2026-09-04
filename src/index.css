@@ -318,8 +318,8 @@ body {
 
 /* Borderless Standalone Portrait Video Wrapper */
 .project-video-wrap {
-  width: min(100%, 340px);
-  margin: 40px auto 0;
+  width: min(100%, 380px);
+  margin: 0;
   border-radius: 20px;
   overflow: hidden;
   background: #000000;
