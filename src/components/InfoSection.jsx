@@ -59,7 +59,10 @@ export default function InfoSection() {
           }
         }
       },
-      { threshold: 0.2 } // Trigger entrance when 20% of section enters viewport
+      { 
+        threshold: 0.45, // Requires 45% of About section to be in viewport
+        rootMargin: "-5% 0px -10% 0px" // Trigger when user is genuinely in the section
+      }
     );
 
     observer.observe(section);
