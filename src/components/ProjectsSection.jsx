@@ -132,48 +132,37 @@ function EditorialProjectSection({ project }) {
             </div>
           </div>
         ) : isRover ? (
-          /* Project 03: Autonomous Rover with Sensor Fusion Hardware Showcase (Text LEFT, Image RIGHT) */
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 items-center">
-            {/* Left Column (55% Text Content on Desktop) */}
-            <div className="md:col-span-7 order-2 md:order-1 space-y-4 text-left">
-              {/* Project Meta */}
+          /* Project 03: Autonomous Rover Physical Hardware Breakdown Hero Section */
+          <div className="space-y-6 text-left max-w-5xl mx-auto">
+            {/* Top Header: Meta, Title, and Short Intro */}
+            <div className="space-y-3">
               <div className="project-meta font-mono text-xs sm:text-sm text-white/50">
                 <span className="font-bold text-white/80">{project.number}</span>
                 <span className="mx-2 text-white/30">·</span>
-                <span className="text-white/75 font-semibold">{project.org}</span>
-                <span className="mx-2 text-white/30">·</span>
-                <span>{project.category}</span>
+                <span className="text-white/75 font-semibold">Personal Project</span>
               </div>
 
-              {/* Project Title */}
               <h2 className="project-title text-3xl sm:text-4xl md:text-5xl font-extrabold font-heading text-white tracking-tight">
                 {project.title}
               </h2>
 
-              {/* Project Description */}
-              <p className="project-description text-base sm:text-lg text-white/75 leading-relaxed font-normal">
-                {project.shortDesc}
+              <p className="project-description text-base sm:text-lg text-white/70 max-w-2xl font-normal leading-relaxed">
+                Built for autonomous movement, obstacle detection, and real-time embedded control.
               </p>
-
-              {/* Project Tech Tags */}
-              <div className="project-tags flex flex-wrap gap-2 pt-2">
-                {project.tech.map((t, idx) => (
-                  <span
-                    key={idx}
-                    className="px-3 py-1 rounded-md bg-white/[0.05] border border-white/[0.10] text-xs font-mono text-white/80"
-                  >
-                    {t}
-                  </span>
-                ))}
-              </div>
             </div>
 
-            {/* Right Column (45% Hardware Image Card with Cool Monochrome Silver SVG Callout Lines) */}
-            <div className="md:col-span-5 order-1 md:order-2 project-media">
-              <InteractiveRoverCard 
+            {/* Product Breakdown Centerpiece Image with Leader Lines */}
+            <div className="relative pt-2 pb-1 project-media">
+              <RoverProductBreakdown 
                 image={project.image} 
                 title={project.title} 
+                isVisible={isVisible}
               />
+            </div>
+
+            {/* Bottom Plain Tech Stack Line */}
+            <div className="pt-2 text-xs sm:text-sm font-mono text-white/50 tracking-wide">
+              ESP32-C3 &nbsp;·&nbsp; Arduino &nbsp;·&nbsp; C/C++ &nbsp;·&nbsp; PlatformIO
             </div>
           </div>
         ) : isAlternate ? (
@@ -690,130 +679,106 @@ function InteractivePcbCard({ image, title, isAutoHighlighted, activePcbTag }) {
   );
 }
 
-/* Sub-Component: Cool Monochrome Soft White/Silver Aerospace Interactive Rover Card (Project 03) */
-function InteractiveRoverCard({ image, title }) {
+/* Sub-Component: Apple-Style Rover Product Breakdown Hero Card (Project 03) */
+function RoverProductBreakdown({ image, title, isVisible }) {
   const [isInspectorOpen, setIsInspectorOpen] = useState(false);
-  const [isDirectlyHovered, setIsDirectlyHovered] = useState(false);
 
-  const callouts = [
-    {
-      id: "arduino",
-      label: "Arduino Uno",
-      lines: ["Arduino Uno"],
-      labelPos: { x: 15, y: 22 },
-      lineStart: { x: 25, y: 24 },
-      target: { x: 43, y: 36 }
-    },
+  const annotations = [
     {
       id: "esp32",
-      label: "ESP32-C3",
-      lines: ["ESP32-C3"],
-      labelPos: { x: 12, y: 46 },
-      lineStart: { x: 21, y: 48 },
-      target: { x: 36, y: 49 }
+      title: "ESP32-C3",
+      sub: "Main controller",
+      labelPos: { x: 8, y: 22 },
+      lineStart: { x: 20, y: 26 },
+      target: { x: 38, y: 46 }
     },
     {
       id: "ultrasonic",
-      label: "Ultrasonic sensor",
-      lines: ["Ultrasonic sensor"],
-      labelPos: { x: 12, y: 77 },
-      lineStart: { x: 26, y: 77 },
-      target: { x: 33, y: 64 }
+      title: "Ultrasonic sensing",
+      sub: "Obstacle detection",
+      labelPos: { x: 8, y: 76 },
+      lineStart: { x: 24, y: 76 },
+      target: { x: 35, y: 64 }
+    },
+    {
+      id: "power",
+      title: "Dual Li-ion power",
+      sub: "Battery-powered operation",
+      labelPos: { x: 70, y: 22 },
+      lineStart: { x: 68, y: 26 },
+      target: { x: 56, y: 32 }
     },
     {
       id: "motors",
-      label: "Motor controllers",
-      lines: ["Motor controllers"],
-      labelPos: { x: 62, y: 81 },
-      lineStart: { x: 62, y: 81 },
-      target: { x: 48, y: 70 }
-    },
-    {
-      id: "battery",
-      label: "2x Li-ion cells / 3700 mAh",
-      lines: ["2x Li-ion cells", "3700 mAh"],
-      labelPos: { x: 63, y: 6 },
-      lineStart: { x: 63, y: 12 },
-      target: { x: 55, y: 31 }
+      title: "Motor control",
+      sub: "Mecanum drive system",
+      labelPos: { x: 70, y: 76 },
+      lineStart: { x: 68, y: 76 },
+      target: { x: 55, y: 68 }
     }
   ];
 
   return (
     <>
-      <div
-        tabIndex={0}
-        aria-label="Autonomous Rover hardware build showing Arduino Uno, ESP32-C3, Ultrasonic sensor, Motor controllers, and 2x Li-ion cells 3700 mAh. Click to inspect full screen image."
-        onMouseEnter={() => setIsDirectlyHovered(true)}
-        onMouseLeave={() => setIsDirectlyHovered(false)}
-        onFocus={() => setIsDirectlyHovered(true)}
-        onBlur={() => setIsDirectlyHovered(false)}
+      <div 
         onClick={() => setIsInspectorOpen(true)}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            setIsInspectorOpen(true);
-          }
-        }}
-        className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-black border border-zinc-800 shadow-xl cursor-pointer group focus:outline-none focus:ring-2 focus:ring-white/30"
+        className={`relative w-full aspect-[16/10] max-w-4xl mx-auto rounded-2xl overflow-hidden bg-black border border-white/10 shadow-2xl cursor-pointer group transition-all duration-1000 transform ${
+          isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-[0.97]'
+        }`}
       >
         <img
           src={image}
-          alt="Autonomous Rover with Sensor Fusion hardware build"
-          className="w-full h-full object-cover block transition-all duration-300 group-hover:brightness-105"
+          alt={title}
+          className="w-full h-full object-cover block transition-transform duration-700 group-hover:scale-[1.01]"
         />
 
-        <div className="sr-only">
-          <h3>Labeled Rover Hardware Subsystems:</h3>
-          <ul>
-            {callouts.map((c) => (
-              <li key={c.id}>{c.label}</li>
-            ))}
-          </ul>
-        </div>
-
-        <div className={`absolute inset-0 transition-opacity duration-300 ease-out z-30 ${
-          isDirectlyHovered ? 'opacity-100' : 'opacity-100 sm:opacity-0 group-hover:opacity-100 group-focus-within:opacity-100'
-        }`}>
-          <svg className="absolute inset-0 w-full h-full pointer-events-none z-20 overflow-hidden">
-            {callouts.map((c) => (
-              <line
-                key={`line-${c.id}`}
-                x1={`${c.lineStart.x}%`}
-                y1={`${c.lineStart.y}%`}
-                x2={`${c.target.x}%`}
-                y2={`${c.target.y}%`}
-                stroke="rgba(245, 247, 250, 0.85)"
-                strokeWidth="1.5"
-                strokeDasharray="3 3"
-                opacity="0.9"
-                style={{ filter: "drop-shadow(0 0 3px rgba(255, 255, 255, 0.4))" }}
-              />
-            ))}
-          </svg>
-
-          {callouts.map((c) => (
-            <React.Fragment key={c.id}>
-              <div
-                className="absolute transform -translate-x-1/2 -translate-y-1/2 w-2.5 h-2.5 rounded-full bg-[#F5F7FA] border border-white/80 shadow-[0_0_10px_rgba(255,255,255,0.8)] animate-pulse z-30 pointer-events-none"
-                style={{ top: `${c.target.y}%`, left: `${c.target.x}%` }}
-              />
-
-              <div
-                className="absolute px-2.5 py-1 rounded-md bg-[#0A0A0C]/90 border border-white/20 text-white font-mono text-[9px] sm:text-[10px] md:text-[11px] font-bold shadow-[0_10px_25px_rgba(0,0,0,0.85)] backdrop-blur-md z-30 pointer-events-none whitespace-nowrap flex items-center gap-1.5 transition-all duration-300"
-                style={{ top: `${c.labelPos.y}%`, left: `${c.labelPos.x}%` }}
-              >
-                <span className="w-1.5 h-1.5 rounded-full bg-[#F5F7FA] animate-pulse flex-shrink-0" />
-                <div className="leading-tight text-left">
-                  {c.lines.map((line, lIdx) => (
-                    <div key={lIdx} className={lIdx === 0 ? "text-white font-bold" : "text-zinc-400 font-normal text-[9px]"}>
-                      {line}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </React.Fragment>
+        {/* Thin Annotation Leader Lines (SVG) */}
+        <svg className="absolute inset-0 w-full h-full pointer-events-none z-20">
+          {annotations.map((ann, idx) => (
+            <line
+              key={`line-${ann.id}`}
+              x1={`${ann.lineStart.x}%`}
+              y1={`${ann.lineStart.y}%`}
+              x2={`${ann.target.x}%`}
+              y2={`${ann.target.y}%`}
+              stroke="rgba(255, 255, 255, 0.4)"
+              strokeWidth="1"
+              strokeDasharray="2 2"
+              className={`transition-all duration-700 ease-out ${
+                isVisible ? 'opacity-100' : 'opacity-0'
+              }`}
+              style={{ transitionDelay: `${idx * 220 + 300}ms` }}
+            />
           ))}
-        </div>
+        </svg>
+
+        {/* Annotations Labels & Endpoint Dots */}
+        {annotations.map((ann, idx) => (
+          <React.Fragment key={ann.id}>
+            {/* Endpoint Dot on Component */}
+            <div
+              style={{ top: `${ann.target.y}%`, left: `${ann.target.x}%`, transitionDelay: `${idx * 220 + 350}ms` }}
+              className={`absolute transform -translate-x-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-white shadow-[0_0_8px_rgba(255,255,255,0.9)] z-30 pointer-events-none transition-all duration-700 ${
+                isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-0'
+              }`}
+            />
+
+            {/* Clean Typographic Label (No pill, no box, no background) */}
+            <div
+              style={{ top: `${ann.labelPos.y}%`, left: `${ann.labelPos.x}%`, transitionDelay: `${idx * 220 + 400}ms` }}
+              className={`absolute transform -translate-y-1/2 z-30 pointer-events-none space-y-0.5 text-left transition-all duration-700 ${
+                isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'
+              }`}
+            >
+              <div className="text-xs sm:text-sm font-semibold font-heading text-white tracking-tight whitespace-nowrap">
+                {ann.title}
+              </div>
+              <div className="text-[10px] sm:text-xs text-white/50 font-sans font-normal whitespace-nowrap">
+                {ann.sub}
+              </div>
+            </div>
+          </React.Fragment>
+        ))}
       </div>
 
       {isInspectorOpen && (
