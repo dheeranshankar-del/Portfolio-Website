@@ -275,19 +275,30 @@ export default function StarfieldCanvas() {
   return (
     <>
       <div
-        className="fixed inset-0 pointer-events-none z-0 bg-black"
-        style={{
-          backgroundImage: `
-            radial-gradient(circle at 50% 45%, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.78) 64%, rgba(0, 0, 0, 0.94) 100%),
-            linear-gradient(180deg, rgba(0, 0, 0, 0.50), rgba(0, 0, 0, 0.64)),
-            url(${assetPath('/outer-space-background.jpg')})
-          `,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center center',
-          backgroundRepeat: 'no-repeat'
-        }}
+        className="fixed inset-0 pointer-events-none z-0 overflow-hidden bg-black"
         aria-hidden="true"
-      />
+      >
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage: `url(${assetPath('/outer-space-background.jpg')})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center center',
+            backgroundRepeat: 'no-repeat',
+            filter: 'brightness(0.48) contrast(1.08) saturate(0.82) hue-rotate(16deg)',
+            opacity: 0.9
+          }}
+        />
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage: `
+              radial-gradient(circle at 50% 42%, rgba(34, 88, 160, 0.24), rgba(6, 18, 42, 0.20) 34%, rgba(0, 0, 0, 0.62) 72%, rgba(0, 0, 0, 0.92) 100%),
+              linear-gradient(180deg, rgba(0, 0, 0, 0.54), rgba(0, 0, 0, 0.72) 58%, rgba(0, 0, 0, 0.82))
+            `
+          }}
+        />
+      </div>
       <canvas
         ref={canvasRef}
         className="fixed inset-0 pointer-events-none z-0"
