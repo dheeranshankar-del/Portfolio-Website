@@ -665,11 +665,11 @@ function InteractivePcbCard({ image, title, isAutoHighlighted, activePcbTag }) {
                 style={{ top: item.top, left: item.left }}
                 className={`absolute flex items-center gap-1.5 px-2.5 py-1 rounded-md font-mono text-[11px] font-bold transition-all duration-300 shadow-2xl ${
                   isPopped
-                    ? 'scale-125 bg-cyan-950/95 border-2 border-cyan-400 text-cyan-200 shadow-[0_0_25px_rgba(6,182,212,0.85)] z-40 animate-pulse'
-                    : 'bg-[#0A0A0C] border border-zinc-700 text-white scale-100'
+                    ? 'scale-110 bg-[#0A0A0C] border border-white text-white shadow-[0_0_15px_rgba(255,255,255,0.25)] z-40'
+                    : 'bg-[#0A0A0C]/90 border border-zinc-700 text-white/90 scale-100'
                 }`}
               >
-                <span className={`w-1.5 h-1.5 rounded-full ${isPopped ? 'bg-cyan-300 animate-ping' : item.pulse ? 'bg-white animate-pulse' : 'bg-white'}`} />
+                <span className={`w-1.5 h-1.5 rounded-full ${isPopped ? 'bg-white scale-125' : item.pulse ? 'bg-white/90 animate-pulse' : 'bg-white/70'}`} />
                 <span>{item.text}</span>
               </div>
             );
