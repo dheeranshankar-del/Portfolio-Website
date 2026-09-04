@@ -783,7 +783,7 @@ function RoverProductBreakdown({ image, title, isVisible }) {
           ))}
         </svg>
 
-        {/* Annotations Typographic Labels (Refined Apple Silver Hierarchy) */}
+        {/* Annotations Typographic Labels (Refined Apple Silver Hierarchy with Soft Radial Scrim) */}
         {annotations.map((ann, idx) => (
           <div
             key={ann.id}
@@ -793,15 +793,23 @@ function RoverProductBreakdown({ image, title, isVisible }) {
               transitionDelay: `${idx * 180 + 400}ms`,
               textShadow: '0 1px 3px rgba(0, 0, 0, 0.85)'
             }}
-            className={`absolute transform -translate-y-1/2 z-30 pointer-events-none space-y-0.5 text-left transition-all duration-700 ${
+            className={`absolute transform -translate-y-1/2 z-30 pointer-events-none transition-all duration-700 ${
               isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'
             }`}
           >
-            <div className="text-sm sm:text-base font-semibold font-heading text-[#F2F2F2] tracking-tight whitespace-nowrap">
-              {ann.title}
-            </div>
-            <div className="text-xs sm:text-sm text-[#C7C7CC] font-mono font-medium whitespace-nowrap">
-              {ann.spec}
+            {/* Tightly Localized Radial Dark Scrim (Fades smoothly outward to transparent with zero hard edges) */}
+            <div
+              className="px-3.5 py-1.5 -mx-3.5 -my-1.5 space-y-0.5 text-left rounded-full"
+              style={{
+                background: 'radial-gradient(ellipse at center, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.25) 55%, rgba(0, 0, 0, 0) 100%)'
+              }}
+            >
+              <div className="text-sm sm:text-base font-semibold font-heading text-[#F2F2F2] tracking-tight whitespace-nowrap">
+                {ann.title}
+              </div>
+              <div className="text-xs sm:text-sm text-[#C7C7CC] font-mono font-medium whitespace-nowrap">
+                {ann.spec}
+              </div>
             </div>
           </div>
         ))}
