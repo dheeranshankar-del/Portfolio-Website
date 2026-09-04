@@ -6,18 +6,18 @@ import { assetPath } from '../utils/assetPath';
 
 export default function HeroSection({ onExploreProjects }) {
   return (
-    <section className="relative min-h-screen flex flex-col justify-center items-center text-center px-4 z-10 pt-20 pb-24">
+    <section className="relative min-h-[100svh] sm:min-h-screen flex flex-col justify-center items-center text-center px-5 sm:px-4 z-10 pt-28 sm:pt-20 pb-28 sm:pb-24 overflow-hidden">
       
       {/* 1. Main Heading: "Hey, I'm Dheeran" */}
-      <h1 className="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight max-w-4xl leading-tight font-heading mb-3 text-white">
-        <span className="text-white">Hey, I'm </span>
-        <span className="text-white inline-block">
+      <h1 className="w-full max-w-[360px] sm:max-w-4xl text-[42px] sm:text-6xl md:text-7xl font-extrabold tracking-tight leading-[0.98] sm:leading-tight font-heading mb-4 sm:mb-3 text-white">
+        <span className="text-white block sm:inline">Hey, I'm </span>
+        <span className="text-white block sm:inline-block min-h-[1.05em]">
           <TextScramble text="Dheeran" delay={150} />
         </span>
       </h1>
 
       {/* 2. Single-Line Subtitle: "Electrical Engineering @ [YorkU logo] YorkU • Arbalest Rocketry" */}
-      <div className="text-[17px] sm:text-[19px] font-medium text-white/80 tracking-normal mb-8 flex items-center justify-center flex-wrap gap-y-1">
+      <div className="w-full max-w-[330px] sm:max-w-none text-[15px] sm:text-[19px] font-medium text-white/80 tracking-normal mb-7 sm:mb-8 flex items-center justify-center flex-wrap gap-x-1.5 gap-y-1 leading-relaxed">
         <span>Electrical Engineering</span>
         <span className="font-semibold text-white ml-1.5 flex items-center gap-1.5">
           @
@@ -28,8 +28,8 @@ export default function HeroSection({ onExploreProjects }) {
           />
           YorkU
         </span>
-        <span className="text-white/80 mx-2 font-bold">•</span>
-        <span className="text-white/90">Arbalest Rocketry</span>
+        <span className="hidden sm:inline text-white/80 mx-2 font-bold">•</span>
+        <span className="w-full sm:w-auto text-white/90">Arbalest Rocketry</span>
       </div>
 
       {/* 3. Single-Strip Glass Status Badge: "Focused on: Embedded Systems" */}

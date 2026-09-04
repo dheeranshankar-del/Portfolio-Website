@@ -129,6 +129,24 @@ body {
   color: currentColor;
 }
 
+@media (max-width: 700px) {
+  .site-header,
+  .portfolio-nav {
+    min-height: 76px;
+    padding: 18px 16px 0;
+    justify-content: center;
+  }
+
+  .header-spacer,
+  .external-links {
+    display: none;
+  }
+
+  .segmented-nav-wrapper {
+    top: 18px;
+  }
+}
+
 /* Perfectly Centered Segmented Navigation Wrapper */
 .segmented-nav-wrapper {
   position: absolute;
@@ -240,6 +258,38 @@ body {
   transition:
     opacity 0.7s ease,
     transform 0.7s cubic-bezier(.23, 1, .32, 1);
+}
+
+@media (max-width: 700px) {
+  .projects {
+    padding-top: 28px;
+  }
+
+  .project-section {
+    padding: 36px 18px 72px;
+  }
+
+  .project-content {
+    width: min(100%, 390px);
+  }
+
+  .project-title {
+    line-height: 0.98;
+  }
+
+  .project-description {
+    font-size: 15px;
+    line-height: 1.65;
+  }
+
+  .project-meta {
+    line-height: 1.45;
+  }
+
+  .project-tags span {
+    font-size: 10px;
+    padding: 5px 8px;
+  }
 }
 
 .project-section.is-visible {

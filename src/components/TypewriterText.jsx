@@ -57,10 +57,10 @@ export default function TypewriterText() {
 
   return (
     /* Clean Premium Status Badge - Single Glass Strip, Zero Inner Borders */
-    <div className="inline-flex items-center gap-3.5 h-[46px] px-5 rounded-full bg-white/[0.04] border border-white/[0.09] backdrop-blur-md shadow-lg text-sm sm:text-base">
+    <div className="inline-flex w-full max-w-[330px] sm:w-auto sm:max-w-none items-center gap-2.5 sm:gap-3.5 h-[44px] sm:h-[46px] px-4 sm:px-5 rounded-full bg-white/[0.04] border border-white/[0.09] backdrop-blur-md shadow-lg text-[13px] sm:text-base">
       <Cpu size={16} className="text-white/70 flex-none" aria-hidden="true" />
-      <span className="text-white/70 font-medium">Focused on:</span>
-      <span className="font-mono font-semibold text-white min-w-[210px] text-left">
+      <span className="text-white/70 font-medium flex-none">Focused on:</span>
+      <span className="font-mono font-semibold text-white min-w-0 sm:min-w-[210px] flex-1 text-left truncate">
         {currentText}
         <span className="animate-pulse text-white/90 font-mono ml-0.5">|</span>
       </span>
