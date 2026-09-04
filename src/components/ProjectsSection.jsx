@@ -24,6 +24,14 @@ function EditorialProjectSection({ project }) {
 
   const [isVisible, setIsVisible] = useState(false);
   const [videoHover, setVideoHover] = useState(false);
+  const [pcbAutoHighlight, setPcbAutoHighlight] = useState(false);
+
+  const handleTypewriterComplete = () => {
+    setPcbAutoHighlight(true);
+    setTimeout(() => {
+      setPcbAutoHighlight(false);
+    }, 3000);
+  };
 
   const isAlternate = project.layout === 'alternate';
   const isRover = project.layout === 'rover-card';
@@ -172,6 +180,7 @@ function EditorialProjectSection({ project }) {
               <InteractivePcbCard 
                 image={project.image} 
                 title={project.title} 
+                isAutoHighlighted={pcbAutoHighlight}
               />
             </div>
 
@@ -194,7 +203,11 @@ function EditorialProjectSection({ project }) {
               </h2>
 
               {project.highlights ? (
-                <TypewriterHighlights highlights={project.highlights} isVisible={isVisible} />
+                <TypewriterHighlights 
+                  highlights={project.highlights} 
+                  isVisible={isVisible} 
+                  onComplete={handleTypewriterComplete}
+                />
               ) : (
                 <p className="project-description text-base sm:text-lg text-white/75 leading-relaxed font-normal">
                   {project.shortDesc}
@@ -294,7 +307,7 @@ function EditorialProjectSection({ project }) {
 }
 
 /* Sub-Component: Apple-Style Typewriter Highlights for Project 02 */
-function TypewriterHighlights({ highlights, isVisible }) {
+function TypewriterHighlights({ highlights, isVisible, onComplete }) {
   const [activeRow, setActiveRow] = useState(0);
   const [labelCharCount, setLabelCharCount] = useState(0);
   const [descCharCount, setDescCharCount] = useState(0);
@@ -305,6 +318,7 @@ function TypewriterHighlights({ highlights, isVisible }) {
 
     if (activeRow >= highlights.length) {
       setIsFinished(true);
+      if (onComplete) onComplete();
       return;
     }
 
@@ -583,9 +597,11 @@ function VideoScrubber({ videoRef }) {
 }
 
 /* Sub-Component: 100% Stationary PCB Engineering Card (Project 02) */
-function InteractivePcbCard({ image, title }) {
+function InteractivePcbCard({ image, title, isAutoHighlighted }) {
   const [isInspectorOpen, setIsInspectorOpen] = useState(false);
   const [isDirectlyHovered, setIsDirectlyHovered] = useState(false);
+
+  const showLabels = isDirectlyHovered || isAutoHighlighted;
 
   return (
     <>
@@ -602,7 +618,7 @@ function InteractivePcbCard({ image, title }) {
           className="w-full h-full object-cover block"
         />
 
-        <div className={`absolute inset-0 pointer-events-none transition-opacity duration-200 ease-out z-30 ${isDirectlyHovered ? 'opacity-100' : 'opacity-0'}`}>
+        <div className={`absolute inset-0 pointer-events-none transition-opacity duration-500 ease-out z-30 ${showLabels ? 'opacity-100' : 'opacity-0'}`}>
           <div className="absolute top-[34%] left-[16%] flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#0A0A0C] border border-zinc-700 text-white font-mono text-[11px] font-bold shadow-2xl">
             <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>
             <span>U1 · STM32 MCU</span>
