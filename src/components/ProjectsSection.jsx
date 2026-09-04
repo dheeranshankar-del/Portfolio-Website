@@ -620,7 +620,7 @@ function VideoScrubber({ videoRef }) {
 const pcbCallouts = [
   { id: 'u1', category: 'MCU', text: 'U1 · STM32 MCU', top: '34%', left: '16%', pulse: true },
   { id: 'u2', category: 'POWER', text: 'U2 · 3.3V Regulator', top: '26%', left: '52%', pulse: false },
-  { id: 'j1', category: 'GPIO', text: 'J1 · USB', top: '50%', left: '72%', pulse: false },
+  { id: 'j1', category: 'USB', text: 'J1 · USB', top: '50%', left: '72%', pulse: false },
   { id: 'j2', category: 'GPIO', text: 'J2 · GPIO Header', top: '6%', left: '22%', pulse: false },
   { id: 'j3', category: 'GPIO', text: 'J3 · GPIO Header', top: '6%', left: '52%', pulse: false },
   { id: 'j4', category: 'GPIO', text: 'J4 · GPIO Header', top: '82%', left: '20%', pulse: false },
@@ -632,11 +632,8 @@ function InteractivePcbCard({ image, title, isAutoHighlighted, activePcbTag }) {
   const [isInspectorOpen, setIsInspectorOpen] = useState(false);
   const [isDirectlyHovered, setIsDirectlyHovered] = useState(false);
 
-  const showLabels = isDirectlyHovered || isAutoHighlighted || Boolean(activePcbTag);
-
   const isTagPopped = (tagCategory) => {
     if (!activePcbTag) return false;
-    if (activePcbTag === 'GPIO' && (tagCategory === 'GPIO' || tagCategory === 'USB')) return true;
     return activePcbTag === tagCategory;
   };
 
@@ -655,15 +652,20 @@ function InteractivePcbCard({ image, title, isAutoHighlighted, activePcbTag }) {
           className="w-full h-full object-cover block"
         />
 
-        <div className={`absolute inset-0 pointer-events-none transition-opacity duration-300 ease-out z-30 ${showLabels ? 'opacity-100' : 'opacity-0'}`}>
+        <div className="absolute inset-0 pointer-events-none z-30">
           {pcbCallouts.map((item) => {
             const isPopped = isTagPopped(item.category);
+            const itemVisible = activePcbTag
+              ? isPopped
+              : (isDirectlyHovered || isAutoHighlighted);
 
             return (
               <div
                 key={item.id}
                 style={{ top: item.top, left: item.left }}
                 className={`absolute flex items-center gap-1.5 px-2.5 py-1 rounded-md font-mono text-[11px] font-bold transition-all duration-300 shadow-2xl ${
+                  itemVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'
+                } ${
                   isPopped
                     ? 'scale-110 bg-[#0A0A0C] border border-white text-white shadow-[0_0_15px_rgba(255,255,255,0.25)] z-40'
                     : 'bg-[#0A0A0C]/90 border border-zinc-700 text-white/90 scale-100'
