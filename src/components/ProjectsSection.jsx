@@ -687,34 +687,42 @@ function RoverProductBreakdown({ image, title, isVisible }) {
     {
       id: "esp32",
       title: "ESP32-C3",
-      sub: "Main controller",
-      labelPos: { x: 8, y: 22 },
-      lineStart: { x: 20, y: 26 },
+      spec: "32-bit RISC-V MCU",
+      labelPos: { x: 7, y: 22 },
+      lineStart: { x: 22, y: 26 },
       target: { x: 38, y: 46 }
     },
     {
       id: "ultrasonic",
-      title: "Ultrasonic sensing",
-      sub: "Obstacle detection",
-      labelPos: { x: 8, y: 76 },
-      lineStart: { x: 24, y: 76 },
+      title: "Ultrasonic Sensors",
+      spec: "Real-time obstacle detection",
+      labelPos: { x: 7, y: 76 },
+      lineStart: { x: 25, y: 76 },
       target: { x: 35, y: 64 }
     },
     {
       id: "power",
-      title: "Dual Li-ion power",
-      sub: "Battery-powered operation",
-      labelPos: { x: 70, y: 22 },
-      lineStart: { x: 68, y: 26 },
+      title: "Li-ion Battery Pack",
+      spec: "2 × 3.7V cells",
+      labelPos: { x: 68, y: 22 },
+      lineStart: { x: 66, y: 26 },
       target: { x: 56, y: 32 }
     },
     {
       id: "motors",
-      title: "Motor control",
-      sub: "Mecanum drive system",
-      labelPos: { x: 70, y: 76 },
-      lineStart: { x: 68, y: 76 },
-      target: { x: 55, y: 68 }
+      title: "TB6612FNG Motor Drivers",
+      spec: "Dual-channel · 1A per channel",
+      labelPos: { x: 65, y: 55 },
+      lineStart: { x: 63, y: 57 },
+      target: { x: 52, y: 64 }
+    },
+    {
+      id: "wheels",
+      title: "Mecanum Wheels",
+      spec: "Omnidirectional drive",
+      labelPos: { x: 68, y: 84 },
+      lineStart: { x: 66, y: 84 },
+      target: { x: 60, y: 78 }
     }
   ];
 
@@ -741,13 +749,13 @@ function RoverProductBreakdown({ image, title, isVisible }) {
               y1={`${ann.lineStart.y}%`}
               x2={`${ann.target.x}%`}
               y2={`${ann.target.y}%`}
-              stroke="rgba(255, 255, 255, 0.4)"
+              stroke="rgba(255, 255, 255, 0.5)"
               strokeWidth="1"
               strokeDasharray="2 2"
               className={`transition-all duration-700 ease-out ${
                 isVisible ? 'opacity-100' : 'opacity-0'
               }`}
-              style={{ transitionDelay: `${idx * 220 + 300}ms` }}
+              style={{ transitionDelay: `${idx * 180 + 300}ms` }}
             />
           ))}
         </svg>
@@ -757,24 +765,24 @@ function RoverProductBreakdown({ image, title, isVisible }) {
           <React.Fragment key={ann.id}>
             {/* Endpoint Dot on Component */}
             <div
-              style={{ top: `${ann.target.y}%`, left: `${ann.target.x}%`, transitionDelay: `${idx * 220 + 350}ms` }}
+              style={{ top: `${ann.target.y}%`, left: `${ann.target.x}%`, transitionDelay: `${idx * 180 + 350}ms` }}
               className={`absolute transform -translate-x-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-white shadow-[0_0_8px_rgba(255,255,255,0.9)] z-30 pointer-events-none transition-all duration-700 ${
                 isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-0'
               }`}
             />
 
-            {/* Clean Typographic Label (No pill, no box, no background) */}
+            {/* Clean High-Contrast Typographic Label (No pill, no box, text drop-shadow) */}
             <div
-              style={{ top: `${ann.labelPos.y}%`, left: `${ann.labelPos.x}%`, transitionDelay: `${idx * 220 + 400}ms` }}
-              className={`absolute transform -translate-y-1/2 z-30 pointer-events-none space-y-0.5 text-left transition-all duration-700 ${
+              style={{ top: `${ann.labelPos.y}%`, left: `${ann.labelPos.x}%`, transitionDelay: `${idx * 180 + 400}ms` }}
+              className={`absolute transform -translate-y-1/2 z-30 pointer-events-none space-y-0.5 text-left transition-all duration-700 drop-shadow-[0_2px_6px_rgba(0,0,0,0.95)] ${
                 isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'
               }`}
             >
-              <div className="text-xs sm:text-sm font-semibold font-heading text-white tracking-tight whitespace-nowrap">
+              <div className="text-sm sm:text-base font-semibold font-heading text-white tracking-tight whitespace-nowrap">
                 {ann.title}
               </div>
-              <div className="text-[10px] sm:text-xs text-white/50 font-sans font-normal whitespace-nowrap">
-                {ann.sub}
+              <div className="text-xs sm:text-sm text-zinc-300 font-mono font-medium whitespace-nowrap">
+                {ann.spec}
               </div>
             </div>
           </React.Fragment>
