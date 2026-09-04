@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import StarfieldCanvas from './components/StarfieldCanvas';
+import ClickGalaxyOverlay from './components/ClickGalaxyOverlay';
 import Navbar from './components/Navbar';
 import HeroSection from './components/HeroSection';
 import ProjectsSection from './components/ProjectsSection';
@@ -38,6 +39,9 @@ export default function App() {
       
       {/* Dynamic Deep Space Starfield Canvas */}
       <StarfieldCanvas />
+
+      {/* Global Cursor-Click Mini-Galaxy Bloom Easter Egg */}
+      <ClickGalaxyOverlay />
 
       {/* Floating Centered Segmented Navbar */}
       <Navbar activeTab={activeTab} setActiveTab={handleTabChange} />
