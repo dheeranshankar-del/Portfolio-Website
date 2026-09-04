@@ -62,7 +62,10 @@ function EditorialProjectSection({ project }) {
           }
         });
       },
-      { threshold: 0.15 }
+      { 
+        threshold: project.highlights ? 0.45 : 0.15,
+        rootMargin: project.highlights ? "-5% 0px -10% 0px" : "0px"
+      }
     );
 
     observer.observe(section);
@@ -326,19 +329,19 @@ function TypewriterHighlights({ highlights, isVisible, onComplete }) {
       const currentTime = performance.now();
       const dt = currentTime - lastTime;
 
-      if (dt > 8) {
+      if (dt > 10) {
         const deltaY = Math.abs(currentScrollY - lastScrollY);
         const velocity = deltaY / dt; // px/ms
 
-        if (velocity > 1.2) {
-          // Rapid scroll -> Finish instantly so all text & PCB callouts render right away
+        if (velocity > 1.5) {
+          // Rapid scroll while viewing -> Finish instantly so text & callouts render right away
           setIsFinished(true);
           if (onComplete) onComplete();
-        } else if (velocity > 0.3) {
-          // Fast scroll -> 3x typing speed acceleration
-          setSpeedMultiplier(0.3);
+        } else if (velocity > 0.4) {
+          // Fast scroll while viewing -> 4x speed acceleration
+          setSpeedMultiplier(0.25);
         } else {
-          // Normal scroll -> Standard speed
+          // Normal scroll while viewing -> Standard speed
           setSpeedMultiplier(1);
         }
 
