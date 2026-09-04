@@ -267,18 +267,18 @@ function EditorialProjectSection({ project }) {
 
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center mt-10 project-media">
-              {/* Left Column (5 Cols on Desktop): Apple-Style Storytelling Narrative */}
-              <div className="lg:col-span-5 flex flex-col justify-center order-2 lg:order-1">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center mt-4 sm:mt-6 project-media">
+              {/* Left Column (6 Cols on Desktop): Apple-Style Storytelling Narrative */}
+              <div className="lg:col-span-6 flex flex-col justify-center order-2 lg:order-1 max-w-xl">
                 <TelemetryAppleStoryline isVisible={isVisible} />
               </div>
 
-              {/* Right Column (7 Cols on Desktop): Vertical Demo Video */}
-              <div className="lg:col-span-7 flex justify-center items-center order-1 lg:order-2">
+              {/* Right Column (6 Cols on Desktop): Larger Vertical Demo Video */}
+              <div className="lg:col-span-6 flex justify-center items-center order-1 lg:order-2">
                 <div 
                   onMouseEnter={() => setVideoHover(true)}
                   onMouseLeave={() => setVideoHover(false)}
-                  className="project-video-wrap relative group cursor-default max-w-sm lg:max-w-md w-full"
+                  className="project-video-wrap relative group cursor-default max-w-md lg:max-w-lg w-full"
                 >
                   <video
                     ref={videoRef}
@@ -340,12 +340,12 @@ function TelemetryAppleStoryline({ isVisible }) {
   }, [isVisible, steps.length]);
 
   return (
-    <div className="py-2 space-y-6">
-      <div className="text-xs font-mono font-semibold tracking-wider text-white/40 uppercase">
+    <div className="py-2 space-y-5 sm:space-y-6">
+      <h3 className="text-xl sm:text-2xl font-semibold font-heading text-white tracking-tight">
         How it works
-      </div>
+      </h3>
 
-      <div className="relative pl-6 border-l border-white/10 space-y-7">
+      <div className="relative pl-6 border-l border-white/10 space-y-6 sm:space-y-7">
         {steps.map((step, idx) => {
           const isActive = activeIndex === idx;
 
@@ -368,15 +368,15 @@ function TelemetryAppleStoryline({ isVisible }) {
               />
 
               <div className={`transition-all duration-500 space-y-1 ${
-                isActive ? 'opacity-100 translate-x-1' : 'opacity-40 hover:opacity-75'
+                isActive ? 'opacity-100 translate-x-1' : 'opacity-50 hover:opacity-85'
               }`}>
-                <h4 className="text-base sm:text-lg font-semibold font-heading text-white tracking-tight">
+                <h4 className="text-lg sm:text-xl font-semibold font-heading text-white tracking-tight">
                   {step.title}
                 </h4>
-                <div className="text-xs font-mono text-cyan-400/90 font-medium">
+                <div className="text-xs sm:text-sm font-mono text-cyan-300/90 font-medium">
                   {step.spec}
                 </div>
-                <p className="text-xs sm:text-sm text-white/70 font-normal leading-relaxed">
+                <p className="text-sm sm:text-base text-white/80 font-normal leading-relaxed">
                   {step.desc}
                 </p>
               </div>
