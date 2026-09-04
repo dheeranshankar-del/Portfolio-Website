@@ -249,6 +249,7 @@ function EditorialProjectSection({ project }) {
                 <video
                   ref={videoRef}
                   src={project.hardwareVideo}
+                  poster={project.poster}
                   autoPlay
                   muted
                   loop
