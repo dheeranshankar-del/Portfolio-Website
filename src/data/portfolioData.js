@@ -68,7 +68,7 @@ export const projectsData = [
     shortDesc: "A real-time telemetry system that streams IMU data over UDP and visualizes rocket orientation, acceleration, and system health through a custom-built Python ground station.",
     caption: "Live hardware demonstration — rotating the IMU updates the rocket orientation in real time.",
     tech: ["Python", "PyQt6", "UDP", "MacBook UDP Bridge", "IMU"],
-    hardwareVideo: assetPath("/projects/hardware-demo.mp4"),
+    hardwareVideo: assetPath("/projects/hardware-demo.mov"),
     softwareVideo: assetPath("/projects/ground-station-demo.mp4"),
     poster: assetPath("/projects/rocket-ground-station.png"),
     hasMissionControl: true,
