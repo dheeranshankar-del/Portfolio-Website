@@ -752,13 +752,13 @@ function RoverProductBreakdown({ image, title, isVisible }) {
         <svg className="absolute inset-0 w-full h-full pointer-events-none z-20">
           {annotations.map((ann, idx) => (
             <React.Fragment key={`svg-ann-${ann.id}`}>
-              {/* Single Clean White Dotted Leader Line (1.5px, 85% Opacity, NO dark shadow/outline) */}
+              {/* Single Clean Bright Silver Dotted Leader Line (1.5px, 90% Opacity) */}
               <line
                 x1={`${ann.lineStart.x}%`}
                 y1={`${ann.lineStart.y}%`}
                 x2={`${ann.target.x}%`}
                 y2={`${ann.target.y}%`}
-                stroke="rgba(255, 255, 255, 0.85)"
+                stroke="rgba(235, 235, 240, 0.9)"
                 strokeWidth="1.5"
                 strokeDasharray="3 4"
                 strokeLinecap="round"
@@ -768,12 +768,12 @@ function RoverProductBreakdown({ image, title, isVisible }) {
                 style={{ transitionDelay: `${idx * 180 + 300}ms` }}
               />
 
-              {/* Endpoint White Circle directly on Hardware Component */}
+              {/* Endpoint Bright Silver Circle directly on Hardware Component */}
               <circle
                 cx={`${ann.target.x}%`}
                 cy={`${ann.target.y}%`}
                 r="3"
-                fill="#FFFFFF"
+                fill="#F5F5F7"
                 className={`transition-all duration-700 ease-out ${
                   isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-0'
                 }`}
@@ -783,19 +783,24 @@ function RoverProductBreakdown({ image, title, isVisible }) {
           ))}
         </svg>
 
-        {/* Annotations Typographic Labels */}
+        {/* Annotations Typographic Labels (Refined Apple Silver Hierarchy) */}
         {annotations.map((ann, idx) => (
           <div
             key={ann.id}
-            style={{ top: `${ann.labelPos.y}%`, left: `${ann.labelPos.x}%`, transitionDelay: `${idx * 180 + 400}ms` }}
-            className={`absolute transform -translate-y-1/2 z-30 pointer-events-none space-y-0.5 text-left transition-all duration-700 drop-shadow-[0_2px_6px_rgba(0,0,0,0.95)] ${
+            style={{
+              top: `${ann.labelPos.y}%`,
+              left: `${ann.labelPos.x}%`,
+              transitionDelay: `${idx * 180 + 400}ms`,
+              textShadow: '0 1px 3px rgba(0, 0, 0, 0.85)'
+            }}
+            className={`absolute transform -translate-y-1/2 z-30 pointer-events-none space-y-0.5 text-left transition-all duration-700 ${
               isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'
             }`}
           >
-            <div className="text-sm sm:text-base font-semibold font-heading text-white tracking-tight whitespace-nowrap">
+            <div className="text-sm sm:text-base font-semibold font-heading text-[#F2F2F2] tracking-tight whitespace-nowrap">
               {ann.title}
             </div>
-            <div className="text-xs sm:text-sm text-zinc-300 font-mono font-medium whitespace-nowrap">
+            <div className="text-xs sm:text-sm text-[#C7C7CC] font-mono font-medium whitespace-nowrap">
               {ann.spec}
             </div>
           </div>
