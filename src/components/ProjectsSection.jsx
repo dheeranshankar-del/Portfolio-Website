@@ -690,47 +690,47 @@ function RoverProductBreakdown({ image, title, isVisible }) {
       spec: "32-bit RISC-V MCU",
       labelPos: { x: 5, y: 18 },
       lineStart: { x: 19, y: 20 },
-      target: { x: 38, y: 44 }
+      target: { x: 39.1, y: 47.9 }
     },
     {
       id: "arduino",
       title: "Arduino Uno",
       spec: "Secondary microcontroller",
-      labelPos: { x: 5, y: 46 },
-      lineStart: { x: 23, y: 48 },
-      target: { x: 44, y: 50 }
+      labelPos: { x: 5, y: 37.4 },
+      lineStart: { x: 21, y: 37.4 },
+      target: { x: 42.2, y: 37.4 }
     },
     {
       id: "ultrasonic",
       title: "HC-SR04 Ultrasonic Sensors",
       spec: "Distance & obstacle sensing",
-      labelPos: { x: 5, y: 70 },
-      lineStart: { x: 32, y: 70 },
-      target: { x: 36, y: 68 }
+      labelPos: { x: 5, y: 65.9 },
+      lineStart: { x: 29.5, y: 65.9 },
+      target: { x: 31.9, y: 65.9 }
     },
     {
       id: "power",
       title: "18650 Li-ion Battery Pack",
       spec: "2 × 3.7V · 3500mAh",
-      labelPos: { x: 64, y: 18 },
-      lineStart: { x: 62, y: 24 },
-      target: { x: 56, y: 30 }
+      labelPos: { x: 64, y: 22 },
+      lineStart: { x: 62, y: 25 },
+      target: { x: 47.9, y: 30.5 }
     },
     {
       id: "motors",
       title: "TB6612FNG Motor Drivers",
       spec: "Dual-channel · 1A/channel",
-      labelPos: { x: 64, y: 48 },
-      lineStart: { x: 62, y: 56 },
-      target: { x: 52, y: 60 }
+      labelPos: { x: 64, y: 68.6 },
+      lineStart: { x: 62, y: 68.6 },
+      target: { x: 47.1, y: 68.6 }
     },
     {
       id: "wheels",
       title: "Mecanum Wheels",
       spec: "Omnidirectional drive",
-      labelPos: { x: 64, y: 78 },
-      lineStart: { x: 62, y: 78 },
-      target: { x: 58, y: 78 }
+      labelPos: { x: 64, y: 82 },
+      lineStart: { x: 62, y: 81 },
+      target: { x: 58.0, y: 78.0 }
     }
   ];
 
