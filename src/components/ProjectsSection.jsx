@@ -740,52 +740,83 @@ function RoverProductBreakdown({ image, title, isVisible }) {
           className="w-full h-full object-cover block transition-transform duration-700 group-hover:scale-[1.01]"
         />
 
-        {/* Thin Annotation Leader Lines (SVG) */}
+        {/* Thin High-Contrast Annotation Leader Lines & Endpoint Dots (SVG) */}
         <svg className="absolute inset-0 w-full h-full pointer-events-none z-20">
           {annotations.map((ann, idx) => (
-            <line
-              key={`line-${ann.id}`}
-              x1={`${ann.lineStart.x}%`}
-              y1={`${ann.lineStart.y}%`}
-              x2={`${ann.target.x}%`}
-              y2={`${ann.target.y}%`}
-              stroke="rgba(255, 255, 255, 0.5)"
-              strokeWidth="1"
-              strokeDasharray="2 2"
-              className={`transition-all duration-700 ease-out ${
-                isVisible ? 'opacity-100' : 'opacity-0'
-              }`}
-              style={{ transitionDelay: `${idx * 180 + 300}ms` }}
-            />
+            <React.Fragment key={`svg-ann-${ann.id}`}>
+              {/* Subtle Dark Contrast Backing Line (remains visible on bright photo regions) */}
+              <line
+                x1={`${ann.lineStart.x}%`}
+                y1={`${ann.lineStart.y}%`}
+                x2={`${ann.target.x}%`}
+                y2={`${ann.target.y}%`}
+                stroke="rgba(0, 0, 0, 0.65)"
+                strokeWidth="2.75"
+                strokeLinecap="round"
+                className={`transition-all duration-700 ease-out ${
+                  isVisible ? 'opacity-100' : 'opacity-0'
+                }`}
+                style={{ transitionDelay: `${idx * 180 + 300}ms` }}
+              />
+
+              {/* Elegant Solid White Hairline (1.25px) */}
+              <line
+                x1={`${ann.lineStart.x}%`}
+                y1={`${ann.lineStart.y}%`}
+                x2={`${ann.target.x}%`}
+                y2={`${ann.target.y}%`}
+                stroke="rgba(255, 255, 255, 0.85)"
+                strokeWidth="1.25"
+                strokeLinecap="round"
+                className={`transition-all duration-700 ease-out ${
+                  isVisible ? 'opacity-100' : 'opacity-0'
+                }`}
+                style={{ transitionDelay: `${idx * 180 + 300}ms` }}
+              />
+
+              {/* Endpoint Dot Contrast Shadow */}
+              <circle
+                cx={`${ann.target.x}%`}
+                cy={`${ann.target.y}%`}
+                r="3"
+                fill="rgba(0, 0, 0, 0.75)"
+                className={`transition-all duration-700 ease-out ${
+                  isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-0'
+                }`}
+                style={{ transitionDelay: `${idx * 180 + 350}ms` }}
+              />
+
+              {/* Endpoint Bright White Hairline Dot */}
+              <circle
+                cx={`${ann.target.x}%`}
+                cy={`${ann.target.y}%`}
+                r="2"
+                fill="#FFFFFF"
+                className={`transition-all duration-700 ease-out ${
+                  isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-0'
+                }`}
+                style={{ transitionDelay: `${idx * 180 + 350}ms` }}
+              />
+            </React.Fragment>
           ))}
         </svg>
 
-        {/* Annotations Labels & Endpoint Dots */}
+        {/* Annotations Typographic Labels */}
         {annotations.map((ann, idx) => (
-          <React.Fragment key={ann.id}>
-            {/* Endpoint Dot on Component */}
-            <div
-              style={{ top: `${ann.target.y}%`, left: `${ann.target.x}%`, transitionDelay: `${idx * 180 + 350}ms` }}
-              className={`absolute transform -translate-x-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-white shadow-[0_0_8px_rgba(255,255,255,0.9)] z-30 pointer-events-none transition-all duration-700 ${
-                isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-0'
-              }`}
-            />
-
-            {/* Clean High-Contrast Typographic Label (No pill, no box, text drop-shadow) */}
-            <div
-              style={{ top: `${ann.labelPos.y}%`, left: `${ann.labelPos.x}%`, transitionDelay: `${idx * 180 + 400}ms` }}
-              className={`absolute transform -translate-y-1/2 z-30 pointer-events-none space-y-0.5 text-left transition-all duration-700 drop-shadow-[0_2px_6px_rgba(0,0,0,0.95)] ${
-                isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'
-              }`}
-            >
-              <div className="text-sm sm:text-base font-semibold font-heading text-white tracking-tight whitespace-nowrap">
-                {ann.title}
-              </div>
-              <div className="text-xs sm:text-sm text-zinc-300 font-mono font-medium whitespace-nowrap">
-                {ann.spec}
-              </div>
+          <div
+            key={ann.id}
+            style={{ top: `${ann.labelPos.y}%`, left: `${ann.labelPos.x}%`, transitionDelay: `${idx * 180 + 400}ms` }}
+            className={`absolute transform -translate-y-1/2 z-30 pointer-events-none space-y-0.5 text-left transition-all duration-700 drop-shadow-[0_2px_6px_rgba(0,0,0,0.95)] ${
+              isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'
+            }`}
+          >
+            <div className="text-sm sm:text-base font-semibold font-heading text-white tracking-tight whitespace-nowrap">
+              {ann.title}
             </div>
-          </React.Fragment>
+            <div className="text-xs sm:text-sm text-zinc-300 font-mono font-medium whitespace-nowrap">
+              {ann.spec}
+            </div>
+          </div>
         ))}
       </div>
 
