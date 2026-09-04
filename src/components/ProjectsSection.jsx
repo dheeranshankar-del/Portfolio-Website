@@ -301,11 +301,9 @@ function EditorialProjectSection({ project }) {
   );
 }
 
-/* Sub-Component: Apple-Style Typewriter Highlights for Project 02 */
+/* Sub-Component: Apple-Style Typewriter Highlights for Project 02 (Simultaneous Row Typing) */
 function TypewriterHighlights({ highlights, isVisible, onComplete, onSelectTag }) {
-  const [activeRow, setActiveRow] = useState(0);
-  const [labelCharCount, setLabelCharCount] = useState(0);
-  const [descCharCount, setDescCharCount] = useState(0);
+  const [progress, setProgress] = useState(0);
   const [isFinished, setIsFinished] = useState(false);
 
   const getTagForLabel = (label) => {
@@ -319,61 +317,63 @@ function TypewriterHighlights({ highlights, isVisible, onComplete, onSelectTag }
   useEffect(() => {
     if (!isVisible || isFinished) return;
 
-    if (activeRow >= highlights.length) {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) {
+      setProgress(1);
       setIsFinished(true);
       if (onComplete) onComplete();
       return;
     }
 
-    const currentItem = highlights[activeRow];
+    const duration = 850; // 850ms target simultaneous animation duration
+    let startTime = null;
+    let animationFrameId = null;
 
-    // Phase 1: Type out Label
-    if (labelCharCount < currentItem.label.length) {
-      const timer = setTimeout(() => {
-        setLabelCharCount((prev) => prev + 1);
-      }, 20);
-      return () => clearTimeout(timer);
-    }
+    const step = (timestamp) => {
+      if (!startTime) startTime = timestamp;
+      const elapsed = timestamp - startTime;
+      const currentProgress = Math.min(elapsed / duration, 1);
+      
+      setProgress(currentProgress);
 
-    // Phase 2: Type out Description
-    if (descCharCount < currentItem.desc.length) {
-      const timer = setTimeout(() => {
-        setDescCharCount((prev) => prev + 1);
-      }, 14);
-      return () => clearTimeout(timer);
-    }
+      if (currentProgress < 1) {
+        animationFrameId = requestAnimationFrame(step);
+      } else {
+        setIsFinished(true);
+        if (onComplete) onComplete();
+      }
+    };
 
-    // Phase 3: Pause briefly before next row
-    const pauseTimer = setTimeout(() => {
-      setActiveRow((prev) => prev + 1);
-      setLabelCharCount(0);
-      setDescCharCount(0);
-    }, 120);
+    animationFrameId = requestAnimationFrame(step);
 
-    return () => clearTimeout(pauseTimer);
-  }, [isVisible, activeRow, labelCharCount, descCharCount, isFinished, highlights, onComplete]);
+    return () => {
+      if (animationFrameId) cancelAnimationFrame(animationFrameId);
+    };
+  }, [isVisible, isFinished, onComplete]);
 
   return (
     <div className="space-y-2.5 py-1">
       {highlights.map((item, i) => {
-        const isPast = isFinished || i < activeRow;
-        const isCurrent = !isFinished && i === activeRow;
+        const totalLen = item.label.length + item.desc.length;
+        const currentTypedCount = isFinished
+          ? totalLen
+          : Math.floor(progress * totalLen);
 
-        const displayedLabel = isPast
+        const isLabelDone = currentTypedCount >= item.label.length;
+
+        const displayedLabel = isFinished
           ? item.label
-          : isCurrent
-          ? item.label.slice(0, labelCharCount)
-          : "";
+          : item.label.slice(0, Math.min(currentTypedCount, item.label.length));
 
-        const isLabelTyping = isCurrent && labelCharCount < item.label.length;
+        const isLabelTyping = !isFinished && currentTypedCount < item.label.length;
 
-        const displayedDesc = isPast
+        const displayedDesc = isFinished
           ? item.desc
-          : isCurrent && labelCharCount >= item.label.length
-          ? item.desc.slice(0, descCharCount)
+          : isLabelDone
+          ? item.desc.slice(0, Math.min(currentTypedCount - item.label.length, item.desc.length))
           : "";
 
-        const isDescTyping = isCurrent && labelCharCount >= item.label.length && descCharCount < item.desc.length;
+        const isDescTyping = !isFinished && isLabelDone && currentTypedCount < totalLen;
         const rowTag = getTagForLabel(item.label);
 
         return (
@@ -393,8 +393,8 @@ function TypewriterHighlights({ highlights, isVisible, onComplete, onSelectTag }
             </span>
 
             {/* Vertical Divider */}
-            <span className={`text-xs font-mono select-none transition-opacity duration-300 ${
-              isPast || (isCurrent && labelCharCount >= item.label.length)
+            <span className={`text-xs font-mono select-none transition-opacity duration-200 ${
+              isFinished || isLabelDone
                 ? 'text-white/25 opacity-100'
                 : 'opacity-0'
             }`}>
