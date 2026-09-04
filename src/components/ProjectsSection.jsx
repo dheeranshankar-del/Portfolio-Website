@@ -689,7 +689,7 @@ function RoverProductBreakdown({ image, title, isVisible }) {
       title: "ESP32-C3",
       spec: "32-bit RISC-V MCU",
       labelPos: { x: 5, y: 18 },
-      lineStart: { x: 20, y: 22 },
+      lineStart: { x: 19, y: 20 },
       target: { x: 38, y: 44 }
     },
     {
@@ -697,8 +697,8 @@ function RoverProductBreakdown({ image, title, isVisible }) {
       title: "Arduino Uno",
       spec: "Secondary microcontroller",
       labelPos: { x: 5, y: 46 },
-      lineStart: { x: 22, y: 48 },
-      target: { x: 44, y: 52 }
+      lineStart: { x: 23, y: 48 },
+      target: { x: 44, y: 50 }
     },
     {
       id: "ultrasonic",
@@ -713,16 +713,16 @@ function RoverProductBreakdown({ image, title, isVisible }) {
       title: "18650 Li-ion Battery Pack",
       spec: "2 × 3.7V · 3500mAh",
       labelPos: { x: 64, y: 18 },
-      lineStart: { x: 62, y: 22 },
-      target: { x: 56, y: 32 }
+      lineStart: { x: 62, y: 24 },
+      target: { x: 56, y: 30 }
     },
     {
       id: "motors",
       title: "TB6612FNG Motor Drivers",
       spec: "Dual-channel · 1A/channel",
       labelPos: { x: 64, y: 48 },
-      lineStart: { x: 62, y: 52 },
-      target: { x: 52, y: 62 }
+      lineStart: { x: 62, y: 56 },
+      target: { x: 52, y: 60 }
     },
     {
       id: "wheels",
@@ -748,34 +748,18 @@ function RoverProductBreakdown({ image, title, isVisible }) {
           className="w-full h-full object-cover block transition-transform duration-700 group-hover:scale-[1.01]"
         />
 
-        {/* Clean Dotted Annotation Leader Lines & Endpoint Dots (SVG) */}
+        {/* Pure Dotted Annotation Leader Lines & Endpoint Dots (SVG) */}
         <svg className="absolute inset-0 w-full h-full pointer-events-none z-20">
           {annotations.map((ann, idx) => (
             <React.Fragment key={`svg-ann-${ann.id}`}>
-              {/* Dotted Line Dark Contrast Backing Shadow */}
-              <line
-                x1={`${ann.lineStart.x}%`}
-                y1={`${ann.lineStart.y}%`}
-                x2={`${ann.target.x}%`}
-                y2={`${ann.target.y}%`}
-                stroke="rgba(0, 0, 0, 0.75)"
-                strokeWidth="3.5"
-                strokeDasharray="2 4"
-                strokeLinecap="round"
-                className={`transition-all duration-700 ease-out ${
-                  isVisible ? 'opacity-100' : 'opacity-0'
-                }`}
-                style={{ transitionDelay: `${idx * 180 + 300}ms` }}
-              />
-
-              {/* Dotted Leader Line (1.5px, Dotted, High Contrast 85% Opacity) */}
+              {/* Single Clean White Dotted Leader Line (1.75px, 85% Opacity, NO dark shadow/outline) */}
               <line
                 x1={`${ann.lineStart.x}%`}
                 y1={`${ann.lineStart.y}%`}
                 x2={`${ann.target.x}%`}
                 y2={`${ann.target.y}%`}
                 stroke="rgba(255, 255, 255, 0.85)"
-                strokeWidth="1.5"
+                strokeWidth="1.75"
                 strokeDasharray="2 4"
                 strokeLinecap="round"
                 className={`transition-all duration-700 ease-out ${
@@ -784,19 +768,7 @@ function RoverProductBreakdown({ image, title, isVisible }) {
                 style={{ transitionDelay: `${idx * 180 + 300}ms` }}
               />
 
-              {/* Hardware Endpoint Dot Shadow */}
-              <circle
-                cx={`${ann.target.x}%`}
-                cy={`${ann.target.y}%`}
-                r="3.5"
-                fill="rgba(0, 0, 0, 0.85)"
-                className={`transition-all duration-700 ease-out ${
-                  isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-0'
-                }`}
-                style={{ transitionDelay: `${idx * 180 + 350}ms` }}
-              />
-
-              {/* Hardware Endpoint Bright White Circle */}
+              {/* Endpoint White Circle directly on Hardware Component */}
               <circle
                 cx={`${ann.target.x}%`}
                 cy={`${ann.target.y}%`}
