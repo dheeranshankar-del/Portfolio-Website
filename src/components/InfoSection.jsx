@@ -83,16 +83,16 @@ export default function InfoSection() {
       ([entry]) => {
         if (entry.isIntersecting) {
           setIsInView(true);
-          // Start 5-second continuous dwell timer if not fired yet
+          // Start 10-second continuous dwell timer if not fired yet
           if (!hasEverFired.current && !dwellTimer) {
             dwellTimer = setTimeout(() => {
               hasEverFired.current = true;
               setIsDwellTriggered(true);
-            }, 5000);
+            }, 10000);
           }
         } else {
           setIsInView(false);
-          // Cancel/reset timer immediately if user scrolls away before 5s!
+          // Cancel/reset timer immediately if user scrolls away before 10s!
           if (dwellTimer) {
             clearTimeout(dwellTimer);
             dwellTimer = null;
