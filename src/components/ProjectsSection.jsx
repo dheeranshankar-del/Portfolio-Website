@@ -783,7 +783,7 @@ function RoverProductBreakdown({ image, title, isVisible }) {
           ))}
         </svg>
 
-        {/* Annotations Typographic Labels (Refined Apple Silver Hierarchy with Soft Photographic Vignette) */}
+        {/* Annotations Typographic Labels (Multi-Layer Glyph Text Shadow - Zero Background Shapes) */}
         {annotations.map((ann, idx) => (
           <div
             key={ann.id}
@@ -791,27 +791,17 @@ function RoverProductBreakdown({ image, title, isVisible }) {
               top: `${ann.labelPos.y}%`,
               left: `${ann.labelPos.x}%`,
               transitionDelay: `${idx * 180 + 400}ms`,
-              textShadow: '0 1px 3px rgba(0, 0, 0, 0.85)'
+              textShadow: '0 1px 2px rgba(0, 0, 0, 0.95), 0 2px 6px rgba(0, 0, 0, 0.75), 0 0 10px rgba(0, 0, 0, 0.35)'
             }}
-            className={`absolute transform -translate-y-1/2 z-30 pointer-events-none transition-all duration-700 ${
+            className={`absolute transform -translate-y-1/2 z-30 pointer-events-none space-y-0.5 text-left transition-all duration-700 ${
               isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'
             }`}
           >
-            {/* Un-bounded Photographic Vignette (Feathers seamlessly into photo with ZERO edges, shapes, or pills) */}
-            <div
-              className="absolute -inset-x-10 -inset-y-6 pointer-events-none z-[-1]"
-              style={{
-                background: 'radial-gradient(ellipse 75% 75% at 45% 50%, rgba(0, 0, 0, 0.42) 0%, rgba(0, 0, 0, 0.15) 50%, rgba(0, 0, 0, 0) 100%)'
-              }}
-            />
-
-            <div className="relative space-y-0.5 text-left">
-              <div className="text-sm sm:text-base font-semibold font-heading text-[#F2F2F2] tracking-tight whitespace-nowrap">
-                {ann.title}
-              </div>
-              <div className="text-xs sm:text-sm text-[#C7C7CC] font-mono font-medium whitespace-nowrap">
-                {ann.spec}
-              </div>
+            <div className="text-sm sm:text-base font-semibold font-heading text-[#F2F2F2] tracking-tight whitespace-nowrap">
+              {ann.title}
+            </div>
+            <div className="text-xs sm:text-sm text-[#C7C7CC] font-mono font-medium whitespace-nowrap">
+              {ann.spec}
             </div>
           </div>
         ))}
