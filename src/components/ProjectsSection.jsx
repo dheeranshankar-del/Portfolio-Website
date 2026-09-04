@@ -783,7 +783,7 @@ function RoverProductBreakdown({ image, title, isVisible }) {
           ))}
         </svg>
 
-        {/* Annotations Typographic Labels (Refined Apple Silver Hierarchy with Soft Radial Scrim) */}
+        {/* Annotations Typographic Labels (Refined Apple Silver Hierarchy with Soft Photographic Vignette) */}
         {annotations.map((ann, idx) => (
           <div
             key={ann.id}
@@ -797,13 +797,15 @@ function RoverProductBreakdown({ image, title, isVisible }) {
               isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'
             }`}
           >
-            {/* Tightly Localized Radial Dark Scrim (Fades smoothly outward to transparent with zero hard edges) */}
+            {/* Un-bounded Photographic Vignette (Feathers seamlessly into photo with ZERO edges, shapes, or pills) */}
             <div
-              className="px-3.5 py-1.5 -mx-3.5 -my-1.5 space-y-0.5 text-left rounded-full"
+              className="absolute -inset-x-10 -inset-y-6 pointer-events-none z-[-1]"
               style={{
-                background: 'radial-gradient(ellipse at center, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.25) 55%, rgba(0, 0, 0, 0) 100%)'
+                background: 'radial-gradient(ellipse 75% 75% at 45% 50%, rgba(0, 0, 0, 0.42) 0%, rgba(0, 0, 0, 0.15) 50%, rgba(0, 0, 0, 0) 100%)'
               }}
-            >
+            />
+
+            <div className="relative space-y-0.5 text-left">
               <div className="text-sm sm:text-base font-semibold font-heading text-[#F2F2F2] tracking-tight whitespace-nowrap">
                 {ann.title}
               </div>
