@@ -11,6 +11,7 @@ export default function InfoSection() {
 
   const [hasScrambledName, setHasScrambledName] = useState(false);
   const [isGlitching, setIsGlitching] = useState(false);
+  const [isSectionVisible, setIsSectionVisible] = useState(false);
 
   const hasTriggeredRef = useRef(false);
   const dwellTimerRef = useRef(null);
@@ -20,17 +21,26 @@ export default function InfoSection() {
     const section = sectionRef.current;
     if (!section) return;
 
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReduced) {
+      setIsSectionVisible(true);
+      setHasScrambledName(true);
+    }
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
+          // Smooth scroll entrance fade-in like project sections
+          setIsSectionVisible(true);
+
           // Lock name scramble ONCE on initial viewport entry
           setHasScrambledName(true);
 
           // Start 15-second continuous dwell timer for signal interference on 'Electrical'
           if (!hasTriggeredRef.current && !dwellTimerRef.current) {
             dwellTimerRef.current = setTimeout(() => {
-              const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-              if (!prefersReduced && electricalRef.current) {
+              const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+              if (!prefersReducedMotion && electricalRef.current) {
                 hasTriggeredRef.current = true;
                 setIsGlitching(true);
 
@@ -49,7 +59,7 @@ export default function InfoSection() {
           }
         }
       },
-      { threshold: 0.4 } // Section must be 40% visible in viewport
+      { threshold: 0.2 } // Trigger entrance when 20% of section enters viewport
     );
 
     observer.observe(section);
@@ -71,7 +81,9 @@ export default function InfoSection() {
     <section
       ref={sectionRef}
       id="about-section"
-      className="py-24 sm:py-32 px-6 max-w-[700px] mx-auto z-10 relative scroll-mt-20 text-left overflow-hidden rounded-3xl"
+      className={`pt-32 sm:pt-44 pb-24 sm:pb-32 px-6 max-w-[700px] mx-auto z-10 relative scroll-mt-20 text-left overflow-hidden rounded-3xl transition-all duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)] transform ${
+        isSectionVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+      }`}
     >
       {/* Keyframe Animations for Black & White CRT TV Unplugged / Turn-Off Effect */}
       <style>{`
