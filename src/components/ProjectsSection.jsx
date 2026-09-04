@@ -783,28 +783,33 @@ function RoverProductBreakdown({ image, title, isVisible }) {
           ))}
         </svg>
 
-        {/* Annotations Typographic Labels (Multi-Layer Glyph Text Shadow - Zero Background Shapes) */}
-        {annotations.map((ann, idx) => (
-          <div
-            key={ann.id}
-            style={{
-              top: `${ann.labelPos.y}%`,
-              left: `${ann.labelPos.x}%`,
-              transitionDelay: `${idx * 180 + 400}ms`,
-              textShadow: '0 1px 2px rgba(0, 0, 0, 0.95), 0 2px 6px rgba(0, 0, 0, 0.75), 0 0 10px rgba(0, 0, 0, 0.35)'
-            }}
-            className={`absolute transform -translate-y-1/2 z-30 pointer-events-none space-y-0.5 text-left transition-all duration-700 ${
-              isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'
-            }`}
-          >
-            <div className="text-sm sm:text-base font-semibold font-heading text-[#F2F2F2] tracking-tight whitespace-nowrap">
-              {ann.title}
+        {/* Annotations Typographic Labels (Enhanced Deep Glyph Contrast Shadow - Zero Background Shapes) */}
+        {annotations.map((ann, idx) => {
+          const isExtraContrastNeeded = ann.id === "esp32" || ann.id === "ultrasonic" || ann.id === "motors";
+          return (
+            <div
+              key={ann.id}
+              style={{
+                top: `${ann.labelPos.y}%`,
+                left: `${ann.labelPos.x}%`,
+                transitionDelay: `${idx * 180 + 400}ms`,
+                textShadow: isExtraContrastNeeded
+                  ? '0 1px 3px #000000, 0 2px 8px rgba(0, 0, 0, 0.98), 0 0 14px rgba(0, 0, 0, 0.9), 0 0 24px rgba(0, 0, 0, 0.7)'
+                  : '0 1px 3px #000000, 0 2px 8px rgba(0, 0, 0, 0.9), 0 0 12px rgba(0, 0, 0, 0.6)'
+              }}
+              className={`absolute transform -translate-y-1/2 z-30 pointer-events-none space-y-0.5 text-left transition-all duration-700 ${
+                isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'
+              }`}
+            >
+              <div className="text-sm sm:text-base font-semibold font-heading text-[#F2F2F2] tracking-tight whitespace-nowrap">
+                {ann.title}
+              </div>
+              <div className="text-xs sm:text-sm text-[#C7C7CC] font-mono font-medium whitespace-nowrap">
+                {ann.spec}
+              </div>
             </div>
-            <div className="text-xs sm:text-sm text-[#C7C7CC] font-mono font-medium whitespace-nowrap">
-              {ann.spec}
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {isInspectorOpen && (
