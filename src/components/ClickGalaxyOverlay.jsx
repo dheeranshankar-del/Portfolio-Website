@@ -30,8 +30,8 @@ export default function ClickGalaxyOverlay() {
       const x = e.clientX;
       const y = e.clientY;
 
-      // Generate 5 to 10 extremely small background stars scattered in 35-60px area
-      const starCount = 5 + Math.floor(Math.random() * 6);
+      // Generate 6 to 11 small background stars scattered in 35-60px area
+      const starCount = 6 + Math.floor(Math.random() * 6);
       const stars = Array.from({ length: starCount }).map((_, idx) => {
         const angle = Math.random() * Math.PI * 2;
         const dist = Math.pow(Math.random(), 0.75) * 28; // Up to ~28px radius (56px diameter area)
@@ -40,14 +40,15 @@ export default function ClickGalaxyOverlay() {
         const microDriftX = (Math.random() - 0.5) * 1.2;
         const microDriftY = (Math.random() - 0.5) * 1.2;
 
-        // Size: Mostly ~1.0px, max 1-2 stars reach ~1.5px-1.8px
+        // Size: Slightly boosted to ~1.2px - 1.6px, with 1-2 stars reaching ~2.0px - 2.4px
         const isSlightlyLarger = idx === 0 || (idx === 1 && starCount > 7);
-        const size = isSlightlyLarger ? 1.4 + Math.random() * 0.4 : 0.9 + Math.random() * 0.3;
+        const size = isSlightlyLarger ? 2.0 + Math.random() * 0.4 : 1.2 + Math.random() * 0.4;
 
-        // Color & Opacity matching background starfield (dim white / off-white & subtle slate-blue)
+        // Color & Opacity (slightly brighter 0.55 - 0.90 for better visibility)
         const isCoolBlue = Math.random() < 0.25;
-        const colorClass = isCoolBlue ? 'bg-slate-300/80' : 'bg-white/80';
-        const opacity = isCoolBlue ? 0.30 + Math.random() * 0.25 : 0.35 + Math.random() * 0.35;
+        const colorClass = isCoolBlue ? 'bg-sky-200' : 'bg-white';
+        const shadowClass = isCoolBlue ? 'shadow-[0_0_3px_#bae6fd]' : 'shadow-[0_0_3px_rgba(255,255,255,0.7)]';
+        const opacity = isCoolBlue ? 0.55 + Math.random() * 0.30 : 0.65 + Math.random() * 0.25;
 
         return {
           id: idx,
@@ -57,6 +58,7 @@ export default function ClickGalaxyOverlay() {
           microDriftY,
           size,
           colorClass,
+          shadowClass,
           opacity,
         };
       });
@@ -144,7 +146,7 @@ export default function ClickGalaxyOverlay() {
                 height: `${s.size}px`,
                 animation: `subtleStarLifecycle 1700ms cubic-bezier(0.25, 1, 0.5, 1) forwards`,
               }}
-              className={`absolute rounded-full pointer-events-none ${s.colorClass}`}
+              className={`absolute rounded-full pointer-events-none ${s.colorClass} ${s.shadowClass}`}
             />
           ))}
         </div>
