@@ -2,6 +2,7 @@ import React from 'react';
 import { ChevronDown } from 'lucide-react';
 import TextScramble from './TextScramble';
 import TypewriterText from './TypewriterText';
+import { assetPath } from '../utils/assetPath';
 
 export default function HeroSection({ onExploreProjects }) {
   return (
@@ -15,10 +16,18 @@ export default function HeroSection({ onExploreProjects }) {
         </span>
       </h1>
 
-      {/* 2. Single-Line Subtitle: "Electrical Engineering @ YorkU • Arbalest Rocketry" */}
+      {/* 2. Single-Line Subtitle: "Electrical Engineering @ [YorkU logo] YorkU • Arbalest Rocketry" */}
       <div className="text-[17px] sm:text-[19px] font-medium text-white/80 tracking-normal mb-8 flex items-center justify-center flex-wrap gap-y-1">
         <span>Electrical Engineering</span>
-        <span className="font-semibold text-white ml-1.5">@ YorkU</span>
+        <span className="font-semibold text-white ml-1.5 flex items-center gap-1.5">
+          @
+          <img
+            src={assetPath("/yorku-u-logo.png")}
+            alt="York University Red Logo Mark"
+            className="h-[15px] sm:h-[16px] w-auto inline-block rounded-[2px] shadow-sm select-none"
+          />
+          YorkU
+        </span>
         <span className="text-white/80 mx-2 font-bold">•</span>
         <span className="text-white/90">Arbalest Rocketry</span>
       </div>
