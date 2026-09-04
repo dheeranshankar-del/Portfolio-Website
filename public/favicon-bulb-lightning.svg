@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" fill="none">
+  <!-- Lightbulb Outline -->
+  <path d="M16 3C10.477 3 6 7.477 6 13C6 16.7 8.02 19.93 11 21.65V24C11 24.55 11.45 25 12 25H20C20.55 25 21 24.55 21 24V21.65C23.98 19.93 26 16.7 26 13C26 7.477 21.523 3 16 3Z" stroke="#FFFFFF" stroke-width="2" stroke-linejoin="round"/>
+  <!-- Socket Base & Threads -->
+  <path d="M13 28C13 29.1 14.34 30 16 30C17.66 30 19 29.1 19 28H13Z" fill="#FFFFFF"/>
+  <line x1="12" y1="25" x2="20" y2="25" stroke="#FFFFFF" stroke-width="1.5"/>
+  <!-- Lightning Bolt Filament Inside -->
+  <polygon points="17 7 11.5 15 15.5 15 14 21 20.5 13 16.5 13" fill="#FFFFFF"/>
+</svg>

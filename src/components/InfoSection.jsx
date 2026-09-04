@@ -3,6 +3,7 @@ import { ArrowUpRight, Mail, FileText } from 'lucide-react';
 import { LinkedinIcon, GithubIcon } from './Icons';
 import { personalInfo } from '../data/portfolioData';
 import ScrambleName from './ScrambleName';
+import { assetPath } from '../utils/assetPath';
 
 export default function InfoSection() {
   return (
@@ -28,7 +29,7 @@ export default function InfoSection() {
             <span className="font-semibold text-white ml-1.5 flex items-center gap-1.5">
               @
               <img
-                src="/yorku-u-logo.png"
+                src={assetPath("/yorku-u-logo.png")}
                 alt="York University Red Logo Mark"
                 className="h-[17px] w-auto inline-block rounded-[2px] shadow-sm select-none"
               />

@@ -3,6 +3,7 @@ import { projectsData } from '../data/portfolioData';
 import PcbInspectorModal from './PcbInspectorModal';
 import LaneMontageInspectorModal from './LaneMontageInspectorModal';
 import { Maximize2 } from 'lucide-react';
+import { assetPath } from '../utils/assetPath';
 
 export default function ProjectsSection({ onSelectProject }) {
   return (
@@ -207,7 +208,7 @@ function EditorialProjectSection({ project }) {
               <div className="project-meta font-mono text-xs sm:text-sm text-white/50 flex items-center flex-wrap gap-x-2 gap-y-1">
                 {project.id === 'arbalest-telemetry' && (
                   <img
-                    src="/arbalest-logo.png"
+                    src={assetPath("/arbalest-logo.png")}
                     alt="Arbalest Rocketry Logo"
                     className="h-[18px] sm:h-[22px] w-auto inline-block opacity-80 select-none pointer-events-none mr-1"
                   />

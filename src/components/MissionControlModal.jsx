@@ -4,6 +4,7 @@ import Rocket3DCanvas from './missionControl/Rocket3DCanvas';
 import ArtificialHorizon from './missionControl/ArtificialHorizon';
 import RollingGraphs from './missionControl/RollingGraphs';
 import AccelBars from './missionControl/AccelBars';
+import { assetPath } from '../utils/assetPath';
 
 export default function MissionControlModal({ onClose }) {
   const [activeTab, setActiveTab] = useState('casestudy'); // 'casestudy' | 'dashboard'
@@ -128,7 +129,7 @@ export default function MissionControlModal({ onClose }) {
               </div>
               <div className="text-[10px] font-mono text-zinc-500 flex items-center gap-1.5 mt-0.5">
                 <img
-                  src="/arbalest-logo.png"
+                  src={assetPath("/arbalest-logo.png")}
                   alt="Arbalest Rocketry Logo"
                   className="h-[14px] w-auto inline-block opacity-75 select-none"
                 />
@@ -202,8 +203,8 @@ export default function MissionControlModal({ onClose }) {
               </h3>
               <div className="rounded-xl overflow-hidden bg-black border border-white/10 aspect-video shadow-2xl">
                 <video
-                  src="/projects/ground-station-demo.mp4"
-                  poster="/projects/rocket-ground-station.png"
+                  src={assetPath("/projects/ground-station-demo.mp4")}
+                  poster={assetPath("/projects/rocket-ground-station.png")}
                   autoPlay
                   muted
                   loop
@@ -224,7 +225,7 @@ export default function MissionControlModal({ onClose }) {
               <div className="flex justify-center bg-black/80 p-4 rounded-xl border border-white/10">
                 <div className="max-w-[240px] aspect-[9/16] rounded-lg overflow-hidden border border-white/10 bg-black">
                   <video
-                    src="/projects/hardware-demo.mov"
+                    src={assetPath("/projects/hardware-demo.mov")}
                     autoPlay
                     muted
                     loop

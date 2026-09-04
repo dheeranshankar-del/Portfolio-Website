@@ -1,3 +1,5 @@
+import { assetPath } from '../utils/assetPath';
+
 export const personalInfo = {
   name: "Dheeran",
   fullName: "Dheeran Shankar",
@@ -23,7 +25,7 @@ export const personalInfo = {
   socials: {
     linkedin: "https://www.linkedin.com/in/dheeran-shankar-303b48275/",
     github: "https://github.com/dheeranshankar-del",
-    resume: "/resume.pdf"
+    resume: assetPath("/resume.pdf")
   },
   about: {
     story: "I am a 3rd-year Electrical Engineering student at York University passionate about embedded systems, avionics hardware, PCB design, and autonomous robotics. Through hands-on experience with Arbalest Rocketry and personal engineering builds, I bridge low-level bare-metal C/C++ firmware with robust hardware architectures.",
@@ -66,9 +68,9 @@ export const projectsData = [
     shortDesc: "A real-time telemetry system that streams IMU data over UDP and visualizes rocket orientation, acceleration, and system health through a custom-built Python ground station.",
     caption: "Live hardware demonstration — rotating the IMU updates the rocket orientation in real time.",
     tech: ["Python", "PyQt6", "UDP", "MacBook UDP Bridge", "IMU"],
-    hardwareVideo: "/projects/hardware-demo.mov",
-    softwareVideo: "/projects/ground-station-demo.mp4",
-    poster: "/projects/rocket-ground-station.png",
+    hardwareVideo: assetPath("/projects/hardware-demo.mov"),
+    softwareVideo: assetPath("/projects/ground-station-demo.mp4"),
+    poster: assetPath("/projects/rocket-ground-station.png"),
     hasMissionControl: true,
     layout: "standard"
   },
@@ -80,7 +82,7 @@ export const projectsData = [
     category: "Embedded Hardware • PCB Design",
     shortDesc: "Designed a custom 2-layer STM32F103 development board for embedded firmware prototyping. The board integrates USB connectivity, SWD debugging, GPIO expansion, a regulated 3.3V power subsystem, and follows STM32 hardware design guidelines for signal integrity and reliable operation.",
     tech: ["STM32F103", "KiCad", "STM32CubeIDE", "USB", "SWD", "PCB Design"],
-    image: "/projects/stm32-actual-pcb.png",
+    image: assetPath("/projects/stm32-actual-pcb.png"),
     hasMissionControl: false,
     layout: "alternate",
     writeup: {
@@ -100,7 +102,7 @@ export const projectsData = [
     category: "Robotics • Embedded Firmware • Sensor Fusion",
     shortDesc: "Designed and built an ESP32/Arduino-based autonomous rover with mecanum wheels, ultrasonic sensing, dual motor control, and battery-powered embedded navigation. The rover uses real-time sensor input for obstacle detection and low-level motor control.",
     tech: ["ESP32-C3", "Arduino", "C/C++", "PlatformIO", "Ultrasonic Sensor", "Motor Drivers", "Mecanum Wheels", "Sensor Fusion"],
-    image: "/projects/rover.jpg",
+    image: assetPath("/projects/rover.jpg"),
     hasMissionControl: false,
     layout: "rover-card"
   },
@@ -113,9 +115,9 @@ export const projectsData = [
     shortDesc: "Developed a prototype ADAS lane detection system using OpenCV, Canny edge detection, region-of-interest masking, and Hough Transform line detection. The system processes driving footage in real time, visualizes detected lane boundaries, estimates lane offset, and displays confidence feedback.",
     tech: ["Python", "OpenCV", "NumPy", "Canny Edge Detection", "Hough Transform", "ADAS", "Computer Vision"],
     images: {
-      mask: "/projects/lane-mask.png",
-      result: "/projects/lane-result.png",
-      assist: "/projects/lane-assist.png"
+      mask: assetPath("/projects/lane-mask.png"),
+      result: assetPath("/projects/lane-result.png"),
+      assist: assetPath("/projects/lane-assist.png")
     },
     hasMissionControl: false,
     layout: "montage-card"

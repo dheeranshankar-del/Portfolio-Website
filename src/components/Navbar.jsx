@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { ArrowUpRight } from 'lucide-react';
 import { personalInfo } from '../data/portfolioData';
+import { assetPath } from '../utils/assetPath';
 
 export default function Navbar({ activeTab, setActiveTab }) {
   const [isHovered, setIsHovered] = useState(false);
@@ -109,7 +110,7 @@ export default function Navbar({ activeTab, setActiveTab }) {
             >
               <div className="relative w-full h-full bg-white rounded-[5px] overflow-hidden border border-zinc-800/30">
                 <img
-                  src="/resume-preview.png"
+                  src={assetPath("/resume-preview.png")}
                   alt="Resume Thumbnail Preview"
                   className="w-full h-full object-cover object-top block"
                 />
