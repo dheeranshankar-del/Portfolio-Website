@@ -5,7 +5,7 @@ import { personalInfo } from '../data/portfolioData';
 import ScrambleName from './ScrambleName';
 import { assetPath } from '../utils/assetPath';
 
-/* Blink-and-you-miss-it Micro Easter Egg: 280ms electrical strike on letter 'i' in 'Electrical' */
+/* Easter Egg: Single-burst electrical shock after 3 continuous seconds in About viewport */
 function ElectricalShockLetter({ char, trigger }) {
   const [animating, setAnimating] = useState(false);
   const [hasTriggered, setHasTriggered] = useState(false);
@@ -21,7 +21,7 @@ function ElectricalShockLetter({ char, trigger }) {
 
     const timer = setTimeout(() => {
       setAnimating(false);
-    }, 280);
+    }, 1000); // 1000ms total strike & afterglow fade
 
     return () => clearTimeout(timer);
   }, [trigger, hasTriggered]);
@@ -32,9 +32,9 @@ function ElectricalShockLetter({ char, trigger }) {
 
   return (
     <span className="relative inline-block">
-      {/* Micro Lightning Bolt SVG (Strikes onto the 'i' dot for ~100ms) */}
+      {/* Micro Lightning Bolt SVG (Strikes onto the 'i' dot for ~120ms) */}
       <svg
-        className="absolute -top-3.5 left-1/2 -translate-x-1/2 w-2.5 h-4 pointer-events-none z-20 animate-[fastBolt_100ms_linear_forwards]"
+        className="absolute -top-3.5 left-1/2 -translate-x-1/2 w-2.5 h-4 pointer-events-none z-20 animate-[dwellBolt_140ms_ease-out_forwards]"
         viewBox="0 0 10 18"
         fill="none"
       >
@@ -44,7 +44,7 @@ function ElectricalShockLetter({ char, trigger }) {
           strokeWidth="1.2"
           strokeLinecap="round"
           strokeLinejoin="round"
-          className="drop-shadow-[0_0_2px_#38BDF8]"
+          className="drop-shadow-[0_0_3px_#38BDF8]"
         />
         <path
           d="M 6 0 L 2.5 7 L 6.5 8 L 3 16"
@@ -55,12 +55,12 @@ function ElectricalShockLetter({ char, trigger }) {
         />
       </svg>
 
-      {/* Micro Impact Sparks */}
-      <span className="absolute -top-0.5 -left-1 w-1 h-1 rounded-full bg-[#FFFFFF] shadow-[0_0_3px_#38BDF8] animate-[fastSparkL_180ms_ease-out_forwards] pointer-events-none" />
-      <span className="absolute -top-1 -right-1 w-0.5 h-0.5 rounded-full bg-[#E0F2FE] shadow-[0_0_3px_#60A5FA] animate-[fastSparkR_180ms_ease-out_forwards] pointer-events-none" />
+      {/* Micro Impact Sparks (fade over ~450ms) */}
+      <span className="absolute -top-0.5 -left-1 w-1 h-1 rounded-full bg-[#FFFFFF] shadow-[0_0_4px_#38BDF8] animate-[dwellSparkL_450ms_ease-out_forwards] pointer-events-none" />
+      <span className="absolute -top-1 -right-1 w-0.5 h-0.5 rounded-full bg-[#E0F2FE] shadow-[0_0_4px_#60A5FA] animate-[dwellSparkR_450ms_ease-out_forwards] pointer-events-none" />
 
-      {/* Split-Second White Flash & 1-2px Jitter on 'i' */}
-      <span className="inline-block animate-[fastJitter_280ms_ease-out_forwards] text-white [text-shadow:0_0_4px_rgba(56,189,248,0.9)]">
+      {/* Letter 'i': impact flash → blue-white glow → gradual fade back to normal (1000ms total) */}
+      <span className="inline-block animate-[dwellJitterGlow_1000ms_ease-out_forwards]">
         {char}
       </span>
     </span>
@@ -69,23 +69,47 @@ function ElectricalShockLetter({ char, trigger }) {
 
 export default function InfoSection() {
   const sectionRef = useRef(null);
+  const [isDwellTriggered, setIsDwellTriggered] = useState(false);
   const [isInView, setIsInView] = useState(false);
+  const hasEverFired = useRef(false);
 
   useEffect(() => {
     const section = sectionRef.current;
     if (!section) return;
 
+    let dwellTimer = null;
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
           setIsInView(true);
+          // Start 3-second continuous dwell timer if not fired yet
+          if (!hasEverFired.current && !dwellTimer) {
+            dwellTimer = setTimeout(() => {
+              hasEverFired.current = true;
+              setIsDwellTriggered(true);
+            }, 3000);
+          }
+        } else {
+          setIsInView(false);
+          // Cancel/reset timer immediately if user scrolls away before 3s!
+          if (dwellTimer) {
+            clearTimeout(dwellTimer);
+            dwellTimer = null;
+          }
         }
       },
-      { threshold: 0.15 }
+      { threshold: 0.4 } // Section must be meaningfully visible in viewport
     );
 
     observer.observe(section);
-    return () => observer.disconnect();
+
+    return () => {
+      observer.disconnect();
+      if (dwellTimer) {
+        clearTimeout(dwellTimer);
+      }
+    };
   }, []);
 
   return (
@@ -94,30 +118,31 @@ export default function InfoSection() {
       id="about-section"
       className="py-24 sm:py-32 px-6 max-w-[700px] mx-auto z-10 relative scroll-mt-20 text-left overflow-hidden rounded-3xl"
     >
-      {/* Keyframe Animations for Ultra-Fast Electrical Strike */}
+      {/* Keyframe Animations for 3-Second Dwell Electrical Shock */}
       <style>{`
-        @keyframes fastBolt {
+        @keyframes dwellBolt {
           0% { opacity: 0; transform: translate(-50%, -6px) scale(0.5); }
           20% { opacity: 1; transform: translate(-50%, 0) scale(1); }
           70% { opacity: 0.9; transform: translate(-50%, 1px) scale(1); }
           100% { opacity: 0; transform: translate(-50%, 2px) scale(0.2); }
         }
-        @keyframes fastSparkL {
+        @keyframes dwellSparkL {
           0% { opacity: 0; transform: translate(0, 0) scale(0); }
           30% { opacity: 1; transform: translate(-3px, -2px) scale(1); }
           100% { opacity: 0; transform: translate(-5px, -3px) scale(0); }
         }
-        @keyframes fastSparkR {
+        @keyframes dwellSparkR {
           0% { opacity: 0; transform: translate(0, 0) scale(0); }
           30% { opacity: 1; transform: translate(3px, -1px) scale(1); }
           100% { opacity: 0; transform: translate(5px, -3px) scale(0); }
         }
-        @keyframes fastJitter {
-          0% { transform: translate(0, 0); }
-          15% { transform: translate(1.5px, -1px); color: #FFFFFF; }
-          35% { transform: translate(-1px, 1px); color: #E0F2FE; }
-          60% { transform: translate(0.5px, -0.5px); }
-          100% { transform: translate(0, 0); }
+        @keyframes dwellJitterGlow {
+          0% { transform: translate(0, 0); color: inherit; text-shadow: none; }
+          10% { transform: translate(1.5px, -1px); color: #FFFFFF; text-shadow: 0 0 8px #38BDF8, 0 0 16px #38BDF8; }
+          25% { transform: translate(-1px, 1px); color: #E0F2FE; text-shadow: 0 0 6px #38BDF8, 0 0 12px #0EA5E9; }
+          45% { transform: translate(0.5px, -0.5px); color: #BAE6FD; text-shadow: 0 0 4px #0EA5E9; }
+          70% { transform: translate(0, 0); color: #F0F9FF; text-shadow: 0 0 2px rgba(56, 189, 248, 0.4); }
+          100% { transform: translate(0, 0); color: inherit; text-shadow: none; }
         }
       `}</style>
 
@@ -135,7 +160,7 @@ export default function InfoSection() {
             <ScrambleName text="Dheeran Shankar" isInView={isInView} />
           </h2>
           <div className="text-[16px] sm:text-[18px] font-medium text-white/80 tracking-normal flex items-center flex-wrap gap-y-1">
-            <span>Electr<ElectricalShockLetter char="i" trigger={isInView} />cal Engineering</span>
+            <span>Electr<ElectricalShockLetter char="i" trigger={isDwellTriggered} />cal Engineering</span>
             <span className="font-semibold text-white ml-1.5 flex items-center gap-1.5">
               @
               <img
