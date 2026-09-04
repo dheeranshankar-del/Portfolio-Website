@@ -688,49 +688,49 @@ function RoverProductBreakdown({ image, title, isVisible }) {
       id: "esp32",
       title: "ESP32-C3",
       spec: "32-bit RISC-V MCU",
-      labelPos: { x: 4, y: 14 },
-      lineStart: { x: 18, y: 16 },
+      labelPos: { x: 11.5, y: 28 },
+      lineStart: { x: 25.5, y: 31 },
       target: { x: 39.1, y: 47.9 }
     },
     {
       id: "arduino",
       title: "Arduino Uno",
       spec: "Secondary microcontroller",
-      labelPos: { x: 4, y: 40 },
-      lineStart: { x: 20, y: 40 },
+      labelPos: { x: 8.5, y: 45 },
+      lineStart: { x: 27.5, y: 47 },
       target: { x: 42.2, y: 37.4 }
     },
     {
       id: "ultrasonic",
       title: "HC-SR04 Ultrasonic Sensors",
       spec: "Distance & obstacle sensing",
-      labelPos: { x: 4, y: 76 },
-      lineStart: { x: 28.5, y: 72 },
-      target: { x: 31.9, y: 65.9 }
+      labelPos: { x: 8.5, y: 71 },
+      lineStart: { x: 31.5, y: 70 },
+      target: { x: 37.0, y: 69.0 }
     },
     {
       id: "power",
       title: "18650 Li-ion Battery Pack",
-      spec: "2 × 3.7V · 3500mAh",
-      labelPos: { x: 66, y: 14 },
-      lineStart: { x: 64, y: 18 },
+      spec: "2 × 3.7V  ·  3500mAh",
+      labelPos: { x: 72.0, y: 31 },
+      lineStart: { x: 70.0, y: 33 },
       target: { x: 47.9, y: 30.5 }
     },
     {
       id: "motors",
       title: "TB6612FNG Motor Drivers",
-      spec: "Dual-channel · 1A/channel",
-      labelPos: { x: 66, y: 52 },
-      lineStart: { x: 64, y: 56 },
+      spec: "Dual-channel  ·  1A/channel",
+      labelPos: { x: 72.0, y: 60 },
+      lineStart: { x: 70.0, y: 62 },
       target: { x: 47.1, y: 68.6 }
     },
     {
       id: "wheels",
       title: "Mecanum Wheels",
       spec: "Omnidirectional drive",
-      labelPos: { x: 66, y: 80 },
-      lineStart: { x: 64, y: 80 },
-      target: { x: 58.0, y: 78.0 }
+      labelPos: { x: 75.0, y: 78 },
+      lineStart: { x: 73.0, y: 80 },
+      target: { x: 62.5, y: 76.5 }
     }
   ];
 
@@ -752,15 +752,15 @@ function RoverProductBreakdown({ image, title, isVisible }) {
         <svg className="absolute inset-0 w-full h-full pointer-events-none z-20">
           {annotations.map((ann, idx) => (
             <React.Fragment key={`svg-ann-${ann.id}`}>
-              {/* Single Clean White Dotted Leader Line (1.75px, 85% Opacity, NO dark shadow/outline) */}
+              {/* Single Clean White Dotted Leader Line (1.5px, 85% Opacity, NO dark shadow/outline) */}
               <line
                 x1={`${ann.lineStart.x}%`}
                 y1={`${ann.lineStart.y}%`}
                 x2={`${ann.target.x}%`}
                 y2={`${ann.target.y}%`}
                 stroke="rgba(255, 255, 255, 0.85)"
-                strokeWidth="1.75"
-                strokeDasharray="2 4"
+                strokeWidth="1.5"
+                strokeDasharray="3 4"
                 strokeLinecap="round"
                 className={`transition-all duration-700 ease-out ${
                   isVisible ? 'opacity-100' : 'opacity-0'
@@ -772,7 +772,7 @@ function RoverProductBreakdown({ image, title, isVisible }) {
               <circle
                 cx={`${ann.target.x}%`}
                 cy={`${ann.target.y}%`}
-                r="2"
+                r="3"
                 fill="#FFFFFF"
                 className={`transition-all duration-700 ease-out ${
                   isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-0'
