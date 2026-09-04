@@ -1,0 +1,377 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Outfit:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --bg-primary: #000000;
+  --bg-surface: #0A0A0A;
+  --background: #111111;
+  --on-background: #F4F4F5;
+  --text-main: #F4F4F5;
+  --text-muted: #A1A1AA;
+  --text-dim: #52525B;
+  
+  --font-heading: 'Outfit', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  background-color: #000000;
+  color: var(--text-main);
+  font-family: var(--font-body);
+}
+
+body {
+  overflow-x: hidden;
+  min-height: 100vh;
+  background: #000000;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #000000;
+}
+::-webkit-scrollbar-thumb {
+  background: #27272A;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #52525B;
+}
+
+/* Typography Utilities */
+.font-mono {
+  font-family: var(--font-mono);
+}
+.font-heading {
+  font-family: var(--font-heading);
+}
+
+/* Glassmorphism Classes */
+.glass-panel {
+  background: rgba(18, 18, 18, 0.65);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+}
+
+.glass-card {
+  background: rgba(16, 16, 16, 0.6);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* =========================================================
+   FIXED FLOATING HEADER ARCHITECTURE (z-index: 99999 for previews)
+   ========================================================= */
+
+.site-header,
+.portfolio-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  min-height: 88px;
+  padding: 24px 44px 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  box-sizing: border-box;
+  z-index: 99999;
+  pointer-events: none;
+}
+
+.site-header > *,
+.portfolio-nav > * {
+  pointer-events: auto;
+}
+
+.header-spacer {
+  /* Empty region balancing grid */
+}
+
+.external-links {
+  display: flex;
+  align-items: center;
+  gap: 36px;
+}
+
+.external-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 200ms ease;
+}
+
+.external-link:hover {
+  color: #FFFFFF;
+}
+
+.external-link svg {
+  flex: none;
+  color: currentColor;
+}
+
+/* Perfectly Centered Segmented Navigation Wrapper */
+.segmented-nav-wrapper {
+  position: absolute;
+  left: 50%;
+  top: 20px;
+  transform: translateX(-50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  pointer-events: auto;
+}
+
+.nav-pill {
+  pointer-events: auto;
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  width: 180px;
+  height: 48px;
+  padding-left: 6px;
+  padding-right: 6px;
+  box-sizing: border-box;
+
+  border: 1px solid rgba(242, 242, 242, 0.10);
+  border-radius: 24px;
+
+  background-color: rgba(242, 242, 242, 0.05);
+
+  -webkit-backdrop-filter: blur(15px);
+  backdrop-filter: blur(15px);
+
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+
+  transition:
+    box-shadow 1s cubic-bezier(.23, 1, .32, 1),
+    border .6s cubic-bezier(.165, .84, .44, 1);
+}
+
+.nav-indicator {
+  position: absolute;
+  top: 3px;
+  left: 4px;
+
+  width: 84px;
+  height: 40px;
+
+  border-radius: 20px;
+
+  background-color: rgba(242, 242, 242, 0.08);
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    0 4px 12px rgba(0, 0, 0, 0.10);
+
+  transform: translateX(0px);
+  transition: transform 0.45s cubic-bezier(.23, 1, .32, 1);
+  will-change: transform;
+}
+
+.nav-indicator--right {
+  transform: translateX(88px);
+}
+
+.nav-toggle {
+  position: relative;
+  z-index: 2;
+
+  width: 84px;
+  height: 40px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 0;
+  background: transparent;
+
+  color: rgba(242, 242, 242, 0.70);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 200ms ease;
+}
+
+.nav-toggle.is-active {
+  color: rgba(242, 242, 242, 0.96);
+}
+
+/* =========================================================
+   PROJECT SECTION & STAGGERED FADE-UP REVEAL ANIMATION (SPEC)
+   ========================================================= */
+
+.hero {
+  min-height: 100vh;
+}
+
+.projects {
+  padding-top: 56px;
+}
+
+.project-section {
+  width: 100%;
+  padding: 48px 24px 96px;
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity 0.7s ease,
+    transform 0.7s cubic-bezier(.23, 1, .32, 1);
+}
+
+.project-section.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.project-content {
+  width: min(100%, 1120px);
+  margin: 0 auto;
+}
+
+.project-description {
+  max-width: 780px;
+}
+
+.project-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+
+  color: var(--on-background);
+  text-decoration: none;
+}
+
+/* Borderless Standalone Portrait Video Wrapper */
+.project-video-wrap {
+  width: min(100%, 340px);
+  margin: 40px auto 0;
+  border-radius: 20px;
+  overflow: hidden;
+  background: #000000;
+  border: none;
+  outline: none;
+  box-shadow: none;
+}
+
+.project-video-wrap video {
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 9 / 16;
+  display: block;
+
+  object-fit: contain;
+  background: #000000;
+  border: none;
+  outline: none;
+  box-shadow: none;
+  transition: transform 0.28s cubic-bezier(0.23, 1, 0.32, 1);
+  will-change: transform;
+}
+
+.project-video-wrap:hover video {
+  transform: scale(1.02);
+}
+
+@media (max-width: 700px) {
+  .project-video-wrap {
+    width: min(82vw, 300px);
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+/* Staggered Element Reveal Offsets & Delays */
+.project-meta,
+.project-title,
+.project-description,
+.project-tags,
+.project-link,
+.project-media {
+  opacity: 0;
+  transform: translateY(20px);
+  transition:
+    opacity 0.65s ease,
+    transform 0.65s cubic-bezier(.23, 1, .32, 1);
+}
+
+.project-section.is-visible .project-meta {
+  transition-delay: 0ms;
+}
+
+.project-section.is-visible .project-title {
+  transition-delay: 70ms;
+}
+
+.project-section.is-visible .project-description {
+  transition-delay: 140ms;
+}
+
+.project-section.is-visible .project-tags {
+  transition-delay: 210ms;
+}
+
+.project-section.is-visible .project-link {
+  transition-delay: 260ms;
+}
+
+.project-section.is-visible .project-media {
+  transition-delay: 330ms;
+}
+
+.project-section.is-visible .project-meta,
+.project-section.is-visible .project-title,
+.project-section.is-visible .project-description,
+.project-section.is-visible .project-tags,
+.project-section.is-visible .project-link,
+.project-section.is-visible .project-media {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* =========================================================
+   SAFE CSS-ONLY COMPUTER VISION HORIZONTAL SCANLINE & HIGHLIGHT
+   ========================================================= */
+
+@keyframes scanline-horizontal-sweep {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(450%);
+  }
+}
+
+.animate-scanline-horizontal {
+  animation: scanline-horizontal-sweep 3.5s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-scanline-horizontal {
+    animation: none;
+  }
+}
