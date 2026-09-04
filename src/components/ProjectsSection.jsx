@@ -25,6 +25,7 @@ function EditorialProjectSection({ project }) {
   const [isVisible, setIsVisible] = useState(false);
   const [videoHover, setVideoHover] = useState(false);
   const [pcbAutoHighlight, setPcbAutoHighlight] = useState(false);
+  const [activePcbTag, setActivePcbTag] = useState(null);
 
   const handleTypewriterComplete = () => {
     setPcbAutoHighlight(true);
@@ -184,6 +185,7 @@ function EditorialProjectSection({ project }) {
                 image={project.image} 
                 title={project.title} 
                 isAutoHighlighted={pcbAutoHighlight}
+                activePcbTag={activePcbTag}
               />
             </div>
 
@@ -210,6 +212,7 @@ function EditorialProjectSection({ project }) {
                   highlights={project.highlights} 
                   isVisible={isVisible} 
                   onComplete={handleTypewriterComplete}
+                  onSelectTag={setActivePcbTag}
                 />
               ) : (
                 <p className="project-description text-base sm:text-lg text-white/75 leading-relaxed font-normal">
@@ -310,11 +313,19 @@ function EditorialProjectSection({ project }) {
 }
 
 /* Sub-Component: Apple-Style Typewriter Highlights for Project 02 */
-function TypewriterHighlights({ highlights, isVisible, onComplete }) {
+function TypewriterHighlights({ highlights, isVisible, onComplete, onSelectTag }) {
   const [activeRow, setActiveRow] = useState(0);
   const [labelCharCount, setLabelCharCount] = useState(0);
   const [descCharCount, setDescCharCount] = useState(0);
   const [isFinished, setIsFinished] = useState(false);
+
+  const getTagForLabel = (label) => {
+    if (label.includes('PCB')) return 'MCU';
+    if (label.includes('DEBUG')) return 'DEBUG';
+    if (label.includes('POWER')) return 'POWER';
+    if (label.includes('I/O')) return 'GPIO';
+    return null;
+  };
 
   useEffect(() => {
     if (!isVisible || isFinished) return;
@@ -374,9 +385,16 @@ function TypewriterHighlights({ highlights, isVisible, onComplete }) {
           : "";
 
         const isDescTyping = isCurrent && labelCharCount >= item.label.length && descCharCount < item.desc.length;
+        const rowTag = getTagForLabel(item.label);
 
         return (
-          <div key={i} className="grid grid-cols-[105px_16px_1fr] sm:grid-cols-[118px_20px_1fr] items-center min-h-[26px]">
+          <div 
+            key={i}
+            onMouseEnter={() => onSelectTag && onSelectTag(rowTag)}
+            onMouseLeave={() => onSelectTag && onSelectTag(null)}
+            onClick={() => onSelectTag && onSelectTag(rowTag)}
+            className="grid grid-cols-[105px_16px_1fr] sm:grid-cols-[118px_20px_1fr] items-center min-h-[26px] cursor-pointer group/row transition-all duration-200"
+          >
             {/* Feature Label */}
             <span className="font-mono text-xs font-bold text-white/90 tracking-wider uppercase flex items-center">
               {displayedLabel}
@@ -599,12 +617,28 @@ function VideoScrubber({ videoRef }) {
   );
 }
 
+const pcbCallouts = [
+  { id: 'u1', category: 'MCU', text: 'U1 · STM32 MCU', top: '34%', left: '16%', pulse: true },
+  { id: 'u2', category: 'POWER', text: 'U2 · 3.3V Regulator', top: '26%', left: '52%', pulse: false },
+  { id: 'j1', category: 'GPIO', text: 'J1 · USB', top: '50%', left: '72%', pulse: false },
+  { id: 'j2', category: 'GPIO', text: 'J2 · GPIO Header', top: '6%', left: '22%', pulse: false },
+  { id: 'j3', category: 'GPIO', text: 'J3 · GPIO Header', top: '6%', left: '52%', pulse: false },
+  { id: 'j4', category: 'GPIO', text: 'J4 · GPIO Header', top: '82%', left: '20%', pulse: false },
+  { id: 'sw1', category: 'DEBUG', text: 'SW1 · User Button', top: '82%', left: '52%', pulse: true },
+];
+
 /* Sub-Component: 100% Stationary PCB Engineering Card (Project 02) */
-function InteractivePcbCard({ image, title, isAutoHighlighted }) {
+function InteractivePcbCard({ image, title, isAutoHighlighted, activePcbTag }) {
   const [isInspectorOpen, setIsInspectorOpen] = useState(false);
   const [isDirectlyHovered, setIsDirectlyHovered] = useState(false);
 
-  const showLabels = isDirectlyHovered || isAutoHighlighted;
+  const showLabels = isDirectlyHovered || isAutoHighlighted || Boolean(activePcbTag);
+
+  const isTagPopped = (tagCategory) => {
+    if (!activePcbTag) return false;
+    if (activePcbTag === 'GPIO' && (tagCategory === 'GPIO' || tagCategory === 'USB')) return true;
+    return activePcbTag === tagCategory;
+  };
 
   return (
     <>
@@ -621,41 +655,25 @@ function InteractivePcbCard({ image, title, isAutoHighlighted }) {
           className="w-full h-full object-cover block"
         />
 
-        <div className={`absolute inset-0 pointer-events-none transition-opacity duration-500 ease-out z-30 ${showLabels ? 'opacity-100' : 'opacity-0'}`}>
-          <div className="absolute top-[34%] left-[16%] flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#0A0A0C] border border-zinc-700 text-white font-mono text-[11px] font-bold shadow-2xl">
-            <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>
-            <span>U1 · STM32 MCU</span>
-          </div>
+        <div className={`absolute inset-0 pointer-events-none transition-opacity duration-300 ease-out z-30 ${showLabels ? 'opacity-100' : 'opacity-0'}`}>
+          {pcbCallouts.map((item) => {
+            const isPopped = isTagPopped(item.category);
 
-          <div className="absolute top-[26%] left-[52%] flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#0A0A0C] border border-zinc-700 text-white font-mono text-[11px] font-bold shadow-2xl">
-            <span className="w-1.5 h-1.5 rounded-full bg-white"></span>
-            <span>U2 · 3.3V Regulator</span>
-          </div>
-
-          <div className="absolute top-[50%] left-[72%] flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#0A0A0C] border border-zinc-700 text-white font-mono text-[11px] font-bold shadow-2xl">
-            <span className="w-1.5 h-1.5 rounded-full bg-white"></span>
-            <span>J1 · USB</span>
-          </div>
-
-          <div className="absolute top-[6%] left-[22%] flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#0A0A0C] border border-zinc-700 text-white font-mono text-[11px] font-bold shadow-2xl">
-            <span className="w-1.5 h-1.5 rounded-full bg-white"></span>
-            <span>J2 · GPIO Header</span>
-          </div>
-
-          <div className="absolute top-[6%] left-[52%] flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#0A0A0C] border border-zinc-700 text-white font-mono text-[11px] font-bold shadow-2xl">
-            <span className="w-1.5 h-1.5 rounded-full bg-white"></span>
-            <span>J3 · GPIO Header</span>
-          </div>
-
-          <div className="absolute top-[82%] left-[20%] flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#0A0A0C] border border-zinc-700 text-white font-mono text-[11px] font-bold shadow-2xl">
-            <span className="w-1.5 h-1.5 rounded-full bg-white"></span>
-            <span>J4 · GPIO Header</span>
-          </div>
-
-          <div className="absolute top-[82%] left-[52%] flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#0A0A0C] border border-zinc-700 text-white font-mono text-[11px] font-bold shadow-2xl">
-            <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>
-            <span>SW1 · User Button</span>
-          </div>
+            return (
+              <div
+                key={item.id}
+                style={{ top: item.top, left: item.left }}
+                className={`absolute flex items-center gap-1.5 px-2.5 py-1 rounded-md font-mono text-[11px] font-bold transition-all duration-300 shadow-2xl ${
+                  isPopped
+                    ? 'scale-125 bg-cyan-950/95 border-2 border-cyan-400 text-cyan-200 shadow-[0_0_25px_rgba(6,182,212,0.85)] z-40 animate-pulse'
+                    : 'bg-[#0A0A0C] border border-zinc-700 text-white scale-100'
+                }`}
+              >
+                <span className={`w-1.5 h-1.5 rounded-full ${isPopped ? 'bg-cyan-300 animate-ping' : item.pulse ? 'bg-white animate-pulse' : 'bg-white'}`} />
+                <span>{item.text}</span>
+              </div>
+            );
+          })}
         </div>
       </div>
 
