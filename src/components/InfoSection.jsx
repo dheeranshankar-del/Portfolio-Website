@@ -7,14 +7,7 @@ import { assetPath } from '../utils/assetPath';
 
 export default function InfoSection() {
   const sectionRef = useRef(null);
-  const electricalIRef = useRef(null);
-
-  const [hasScrambledName, setHasScrambledName] = useState(false);
-  const [isElectricalAnimating, setIsElectricalAnimating] = useState(false);
-
-  const hasLightningTriggeredRef = useRef(false);
-  const dwellTimerRef = useRef(null);
-  const animTimerRef = useRef(null);
+  const [isInView, setIsInView] = useState(false);
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -23,48 +16,14 @@ export default function InfoSection() {
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          // Trigger name scramble ONCE on initial view and lock it
-          setHasScrambledName(true);
-
-          // 3-second continuous dwell timer for electrical shock on 'i'
-          if (!hasLightningTriggeredRef.current && !dwellTimerRef.current) {
-            dwellTimerRef.current = setTimeout(() => {
-              const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-              if (!prefersReduced && electricalIRef.current) {
-                hasLightningTriggeredRef.current = true;
-                setIsElectricalAnimating(true);
-
-                if (animTimerRef.current) clearTimeout(animTimerRef.current);
-                animTimerRef.current = setTimeout(() => {
-                  setIsElectricalAnimating(false);
-                }, 1000);
-              }
-            }, 3000); // 3 continuous seconds
-          }
-        } else {
-          // User scrolled away before 3 seconds! Cancel & reset dwell timer immediately
-          if (dwellTimerRef.current) {
-            clearTimeout(dwellTimerRef.current);
-            dwellTimerRef.current = null;
-          }
+          setIsInView(true);
         }
       },
-      { threshold: 0.4 } // Section must be 40% visible in viewport
+      { threshold: 0.15 }
     );
 
     observer.observe(section);
-
-    return () => {
-      observer.disconnect();
-      if (dwellTimerRef.current) {
-        clearTimeout(dwellTimerRef.current);
-        dwellTimerRef.current = null;
-      }
-      if (animTimerRef.current) {
-        clearTimeout(animTimerRef.current);
-        animTimerRef.current = null;
-      }
-    };
+    return () => observer.disconnect();
   }, []);
 
   return (
@@ -73,34 +32,6 @@ export default function InfoSection() {
       id="about-section"
       className="py-24 sm:py-32 px-6 max-w-[700px] mx-auto z-10 relative scroll-mt-20 text-left overflow-hidden rounded-3xl"
     >
-      {/* Keyframe Animations for 3-Second Dwell Electrical Shock */}
-      <style>{`
-        @keyframes dwellBolt {
-          0% { opacity: 0; transform: translate(-50%, -6px) scale(0.5); }
-          20% { opacity: 1; transform: translate(-50%, 0) scale(1); }
-          70% { opacity: 0.9; transform: translate(-50%, 1px) scale(1); }
-          100% { opacity: 0; transform: translate(-50%, 2px) scale(0.2); }
-        }
-        @keyframes dwellSparkL {
-          0% { opacity: 0; transform: translate(0, 0) scale(0); }
-          30% { opacity: 1; transform: translate(-3px, -2px) scale(1); }
-          100% { opacity: 0; transform: translate(-5px, -3px) scale(0); }
-        }
-        @keyframes dwellSparkR {
-          0% { opacity: 0; transform: translate(0, 0) scale(0); }
-          30% { opacity: 1; transform: translate(3px, -1px) scale(1); }
-          100% { opacity: 0; transform: translate(5px, -3px) scale(0); }
-        }
-        @keyframes dwellJitterGlow {
-          0% { transform: translate(0, 0); color: inherit; text-shadow: none; }
-          10% { transform: translate(1.5px, -1px); color: #FFFFFF; text-shadow: 0 0 8px #38BDF8, 0 0 16px #38BDF8; }
-          25% { transform: translate(-1px, 1px); color: #E0F2FE; text-shadow: 0 0 6px #38BDF8, 0 0 12px #0EA5E9; }
-          45% { transform: translate(0.5px, -0.5px); color: #BAE6FD; text-shadow: 0 0 4px #0EA5E9; }
-          70% { transform: translate(0, 0); color: #F0F9FF; text-shadow: 0 0 2px rgba(56, 189, 248, 0.4); }
-          100% { transform: translate(0, 0); color: inherit; text-shadow: none; }
-        }
-      `}</style>
-
       {/* Faint Background Diagonal Trailing Accent Line */}
       <div 
         className="absolute -top-12 -left-16 w-[450px] h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent transform -rotate-12 pointer-events-none z-0" 
@@ -112,50 +43,10 @@ export default function InfoSection() {
         {/* Top: Name + Subheading matching exact Hero Subtitle Typography */}
         <div className="space-y-2">
           <h2 className="text-2xl sm:text-3xl font-bold font-heading text-white tracking-tight">
-            <ScrambleName text="Dheeran Shankar" isInView={hasScrambledName} />
+            <ScrambleName text="Dheeran Shankar" isInView={isInView} />
           </h2>
           <div className="text-[16px] sm:text-[18px] font-medium text-white/80 tracking-normal flex items-center flex-wrap gap-y-1">
-            <span>
-              Electr
-              <span
-                ref={electricalIRef}
-                className={`electrical-i inline-block ${
-                  isElectricalAnimating
-                    ? 'relative text-white [text-shadow:0_0_4px_rgba(56,189,248,0.9)] animate-[dwellJitterGlow_1000ms_ease-out_forwards]'
-                    : ''
-                }`}
-              >
-                {isElectricalAnimating && (
-                  <>
-                    <svg
-                      className="absolute -top-3.5 left-1/2 -translate-x-1/2 w-2.5 h-4 pointer-events-none z-20 animate-[dwellBolt_140ms_ease-out_forwards]"
-                      viewBox="0 0 10 18"
-                      fill="none"
-                    >
-                      <path
-                        d="M 6 0 L 2.5 7 L 6.5 8 L 3 16"
-                        stroke="#38BDF8"
-                        strokeWidth="1.2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        className="drop-shadow-[0_0_3px_#38BDF8]"
-                      />
-                      <path
-                        d="M 6 0 L 2.5 7 L 6.5 8 L 3 16"
-                        stroke="#FFFFFF"
-                        strokeWidth="0.6"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                    <span className="absolute -top-0.5 -left-1 w-1 h-1 rounded-full bg-[#FFFFFF] shadow-[0_0_4px_#38BDF8] animate-[dwellSparkL_450ms_ease-out_forwards] pointer-events-none" />
-                    <span className="absolute -top-1 -right-1 w-0.5 h-0.5 rounded-full bg-[#E0F2FE] shadow-[0_0_4px_#60A5FA] animate-[dwellSparkR_450ms_ease-out_forwards] pointer-events-none" />
-                  </>
-                )}
-                i
-              </span>
-              cal Engineering
-            </span>
+            <span>Electrical Engineering</span>
             <span className="font-semibold text-white ml-1.5 flex items-center gap-1.5">
               @
               <img
