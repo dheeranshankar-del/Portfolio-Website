@@ -196,12 +196,12 @@ function EditorialProjectSection({ project }) {
               {project.highlights ? (
                 <div className="space-y-2.5 py-1">
                   {project.highlights.map((item, i) => (
-                    <div key={i} className="flex flex-wrap items-baseline gap-2.5 text-sm sm:text-base">
-                      <span className="font-mono text-xs font-bold text-white tracking-wide uppercase px-2 py-0.5 rounded bg-white/[0.06] border border-white/10 shrink-0">
+                    <div key={i} className="grid grid-cols-[105px_16px_1fr] sm:grid-cols-[118px_20px_1fr] items-center">
+                      <span className="font-mono text-xs font-bold text-white/90 tracking-wider uppercase">
                         {item.label}
                       </span>
-                      <span className="text-white/30 text-xs font-mono">—</span>
-                      <span className="text-white/80 font-normal">{item.desc}</span>
+                      <span className="text-white/25 text-xs font-mono select-none">│</span>
+                      <span className="text-white/80 font-sans font-normal text-sm sm:text-base">{item.desc}</span>
                     </div>
                   ))}
                 </div>
