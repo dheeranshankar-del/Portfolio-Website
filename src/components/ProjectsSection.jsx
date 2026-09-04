@@ -194,17 +194,7 @@ function EditorialProjectSection({ project }) {
               </h2>
 
               {project.highlights ? (
-                <div className="space-y-2.5 py-1">
-                  {project.highlights.map((item, i) => (
-                    <div key={i} className="grid grid-cols-[105px_16px_1fr] sm:grid-cols-[118px_20px_1fr] items-center">
-                      <span className="font-mono text-xs font-bold text-white/90 tracking-wider uppercase">
-                        {item.label}
-                      </span>
-                      <span className="text-white/25 text-xs font-mono select-none">│</span>
-                      <span className="text-white/80 font-sans font-normal text-sm sm:text-base">{item.desc}</span>
-                    </div>
-                  ))}
-                </div>
+                <TypewriterHighlights highlights={project.highlights} isVisible={isVisible} />
               ) : (
                 <p className="project-description text-base sm:text-lg text-white/75 leading-relaxed font-normal">
                   {project.shortDesc}
@@ -300,6 +290,104 @@ function EditorialProjectSection({ project }) {
         )}
       </div>
     </section>
+  );
+}
+
+/* Sub-Component: Apple-Style Typewriter Highlights for Project 02 */
+function TypewriterHighlights({ highlights, isVisible }) {
+  const [activeRow, setActiveRow] = useState(0);
+  const [labelCharCount, setLabelCharCount] = useState(0);
+  const [descCharCount, setDescCharCount] = useState(0);
+  const [isFinished, setIsFinished] = useState(false);
+
+  useEffect(() => {
+    if (!isVisible || isFinished) return;
+
+    if (activeRow >= highlights.length) {
+      setIsFinished(true);
+      return;
+    }
+
+    const currentItem = highlights[activeRow];
+
+    // Phase 1: Type out Label
+    if (labelCharCount < currentItem.label.length) {
+      const timer = setTimeout(() => {
+        setLabelCharCount((prev) => prev + 1);
+      }, 22);
+      return () => clearTimeout(timer);
+    }
+
+    // Phase 2: Type out Description
+    if (descCharCount < currentItem.desc.length) {
+      const timer = setTimeout(() => {
+        setDescCharCount((prev) => prev + 1);
+      }, 16);
+      return () => clearTimeout(timer);
+    }
+
+    // Phase 3: Pause briefly before next row
+    const pauseTimer = setTimeout(() => {
+      setActiveRow((prev) => prev + 1);
+      setLabelCharCount(0);
+      setDescCharCount(0);
+    }, 140);
+
+    return () => clearTimeout(pauseTimer);
+  }, [isVisible, activeRow, labelCharCount, descCharCount, isFinished, highlights]);
+
+  return (
+    <div className="space-y-2.5 py-1">
+      {highlights.map((item, i) => {
+        const isPast = isFinished || i < activeRow;
+        const isCurrent = !isFinished && i === activeRow;
+
+        const displayedLabel = isPast
+          ? item.label
+          : isCurrent
+          ? item.label.slice(0, labelCharCount)
+          : "";
+
+        const isLabelTyping = isCurrent && labelCharCount < item.label.length;
+
+        const displayedDesc = isPast
+          ? item.desc
+          : isCurrent && labelCharCount >= item.label.length
+          ? item.desc.slice(0, descCharCount)
+          : "";
+
+        const isDescTyping = isCurrent && labelCharCount >= item.label.length && descCharCount < item.desc.length;
+
+        return (
+          <div key={i} className="grid grid-cols-[105px_16px_1fr] sm:grid-cols-[118px_20px_1fr] items-center min-h-[26px]">
+            {/* Feature Label */}
+            <span className="font-mono text-xs font-bold text-white/90 tracking-wider uppercase flex items-center">
+              {displayedLabel}
+              {isLabelTyping && (
+                <span className="inline-block w-[2px] h-[13px] bg-white/90 ml-0.5 animate-pulse" />
+              )}
+            </span>
+
+            {/* Vertical Divider */}
+            <span className={`text-xs font-mono select-none transition-opacity duration-300 ${
+              isPast || (isCurrent && labelCharCount >= item.label.length)
+                ? 'text-white/25 opacity-100'
+                : 'opacity-0'
+            }`}>
+              │
+            </span>
+
+            {/* Description */}
+            <span className="text-white/80 font-sans font-normal text-sm sm:text-base flex items-center">
+              {displayedDesc}
+              {isDescTyping && (
+                <span className="inline-block w-[2px] h-[15px] bg-white/90 ml-0.5 animate-pulse" />
+              )}
+            </span>
+          </div>
+        );
+      })}
+    </div>
   );
 }
 
