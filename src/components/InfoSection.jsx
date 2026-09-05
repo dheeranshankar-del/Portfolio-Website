@@ -5,7 +5,7 @@ import { personalInfo } from '../data/portfolioData';
 import ScrambleName from './ScrambleName';
 import { assetPath } from '../utils/assetPath';
 
-export default function InfoSection({ glitchTrigger = 0 }) {
+export default function InfoSection() {
   const sectionRef = useRef(null);
 
   const [hasScrambledName, setHasScrambledName] = useState(false);
@@ -63,7 +63,7 @@ export default function InfoSection({ glitchTrigger = 0 }) {
         {/* Top: Name + Subheading matching exact Hero Subtitle Typography */}
         <div className="space-y-2">
           <h2 className="text-2xl sm:text-3xl font-bold font-heading text-white tracking-tight">
-            <ScrambleName text="Dheeran Shankar" isInView={hasScrambledName} triggerCount={glitchTrigger} />
+            <ScrambleName text="Dheeran Shankar" isInView={hasScrambledName} />
           </h2>
           <div className="text-[16px] sm:text-[18px] font-medium text-white/80 tracking-normal flex items-center flex-wrap gap-y-1">
             <span>
