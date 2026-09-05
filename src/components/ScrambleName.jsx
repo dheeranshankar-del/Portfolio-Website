@@ -165,7 +165,7 @@ export default function ScrambleName({
 
     randomGlitchTimeoutRef.current = setTimeout(() => {
       setRandomGlitchIndex(-1);
-    }, 1600);
+    }, 1000);
   }, [text]);
 
   const startDescramble = useCallback(() => {
