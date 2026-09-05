@@ -4,6 +4,7 @@ import PcbInspectorModal from './PcbInspectorModal';
 import LaneMontageInspectorModal from './LaneMontageInspectorModal';
 import { Maximize2, ExternalLink } from 'lucide-react';
 import { assetPath } from '../utils/assetPath';
+import { GithubIcon } from './Icons';
 
 export default function ProjectsSection({ onSelectProject }) {
   return (
@@ -128,6 +129,7 @@ function EditorialProjectSection({ project }) {
                     {t}
                   </span>
                 ))}
+                <ProjectRepoLink href={project.githubUrl} title={project.title} />
               </div>
             </div>
           </div>
@@ -161,8 +163,9 @@ function EditorialProjectSection({ project }) {
             </div>
 
             {/* Bottom Plain Tech Stack Line */}
-            <div className="pt-2 text-xs sm:text-sm font-mono text-white/50 tracking-wide">
-              ESP32-C3 &nbsp;·&nbsp; Arduino &nbsp;·&nbsp; C/C++ &nbsp;·&nbsp; PlatformIO
+            <div className="pt-2 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs sm:text-sm font-mono text-white/50 tracking-wide">
+              <span>ESP32-C3 &nbsp;·&nbsp; Arduino &nbsp;·&nbsp; C/C++ &nbsp;·&nbsp; PlatformIO</span>
+              <ProjectRepoLink href={project.githubUrl} title={project.title} />
             </div>
           </div>
         ) : isAlternate ? (
@@ -218,17 +221,7 @@ function EditorialProjectSection({ project }) {
                     {t}
                   </span>
                 ))}
-                {project.githubUrl && (
-                  <a
-                    href={project.githubUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-white/[0.08] hover:bg-white/[0.16] border border-white/[0.18] text-white hover:text-cyan-300 text-xs font-mono font-semibold transition-all ml-1"
-                  >
-                    <span>GitHub</span>
-                    <ExternalLink size={12} className="opacity-80" />
-                  </a>
-                )}
+                <ProjectRepoLink href={project.githubUrl} title={project.title} />
               </div>
             </div>
           </div>
@@ -262,6 +255,18 @@ function EditorialProjectSection({ project }) {
               <p className="project-description text-base sm:text-lg text-white/75 leading-relaxed font-normal">
                 {project.shortDesc}
               </p>
+
+              <div className="project-tags flex flex-wrap items-center gap-2 pt-2">
+                {project.tech.map((t, idx) => (
+                  <span
+                    key={idx}
+                    className="px-3 py-1 rounded-md bg-white/[0.05] border border-white/[0.10] text-xs font-mono text-white/80"
+                  >
+                    {t}
+                  </span>
+                ))}
+                <ProjectRepoLink href={project.githubUrl} title={project.title} />
+              </div>
 
             </div>
 
@@ -298,6 +303,25 @@ function EditorialProjectSection({ project }) {
         )}
       </div>
     </section>
+  );
+}
+
+function ProjectRepoLink({ href, title }) {
+  if (!href) return null;
+
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      onClick={(event) => event.stopPropagation()}
+      aria-label={`Open ${title} GitHub repository`}
+      className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-white/[0.08] hover:bg-white/[0.16] border border-white/[0.18] text-white hover:text-cyan-300 text-xs font-mono font-semibold transition-all"
+    >
+      <GithubIcon size={13} className="opacity-85" />
+      <span>GitHub Repo</span>
+      <ExternalLink size={12} className="opacity-75" />
+    </a>
   );
 }
 

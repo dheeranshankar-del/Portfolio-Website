@@ -71,6 +71,7 @@ export const projectsData = [
     hardwareVideo: assetPath("/projects/hardware-demo.mov"),
     softwareVideo: assetPath("/projects/ground-station-demo.mp4"),
     poster: assetPath("/projects/rocket-ground-station.png"),
+    githubUrl: "https://github.com/dheeranshankar-del/Arbalest-Telemetry",
     hasMissionControl: true,
     layout: "standard"
   },
@@ -110,6 +111,7 @@ export const projectsData = [
     shortDesc: "Designed and built an ESP32/Arduino-based autonomous rover with mecanum wheels, ultrasonic sensing, dual motor control, and battery-powered embedded navigation. The rover uses real-time sensor input for obstacle detection and low-level motor control.",
     tech: ["ESP32-C3", "Arduino", "C/C++", "PlatformIO", "Ultrasonic Sensor", "Motor Drivers", "Mecanum Wheels", "Sensor Fusion"],
     image: assetPath("/projects/rover.jpg"),
+    githubUrl: "https://github.com/dheeranshankar-del/Rover-",
     hasMissionControl: false,
     layout: "rover-card"
   },
@@ -126,6 +128,7 @@ export const projectsData = [
       result: assetPath("/projects/lane-result.png"),
       assist: assetPath("/projects/lane-assist.png")
     },
+    githubUrl: "https://github.com/dheeranshankar-del/lane-assist-opencv",
     hasMissionControl: false,
     layout: "montage-card"
   }
