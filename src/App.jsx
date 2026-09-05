@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import StarfieldCanvas from './components/StarfieldCanvas';
 import ClickGalaxyOverlay from './components/ClickGalaxyOverlay';
 import Navbar from './components/Navbar';
@@ -14,6 +14,39 @@ export default function App() {
   const [selectedProject, setSelectedProject] = useState(null);
   const [isMissionControlOpen, setIsMissionControlOpen] = useState(false);
   const [aboutGlitchTrigger, setAboutGlitchTrigger] = useState(1);
+
+  // Automatic Navbar Scroll Spy
+  useEffect(() => {
+    const projectsEl = document.getElementById('projects-section');
+    const aboutEl = document.getElementById('about-section');
+
+    if (!projectsEl || !aboutEl) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            if (entry.target.id === 'about-section') {
+              setActiveTab('about');
+            } else if (entry.target.id === 'projects-section') {
+              setActiveTab('projects');
+            }
+          }
+        });
+      },
+      {
+        threshold: 0.2,
+        rootMargin: '-10% 0px -30% 0px'
+      }
+    );
+
+    observer.observe(projectsEl);
+    observer.observe(aboutEl);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
 
   const handleOpenProjectModal = (project) => {
     if (project.hasMissionControl || project.isSpecial) {
