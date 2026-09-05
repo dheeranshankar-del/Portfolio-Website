@@ -69,12 +69,12 @@ export default function InfoSection() {
             <span>
               Electrical Engineering
             </span>
-            <span className="font-semibold text-white ml-1.5 flex items-center gap-1.5">
+            <span className="font-semibold text-white ml-1.5 inline-flex items-center gap-1.5">
               @
               <img
                 src={assetPath("/yorku-u-logo.png")}
                 alt="York University Red Logo Mark"
-                className="h-[17px] w-auto inline-block rounded-[2px] shadow-sm select-none"
+                className="h-[16px] sm:h-[18px] w-auto inline-block rounded-[2px] shadow-sm select-none translate-y-[1px]"
               />
               York University
             </span>

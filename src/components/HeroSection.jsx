@@ -19,12 +19,12 @@ export default function HeroSection({ onExploreProjects }) {
       {/* 2. Single-Line Subtitle: "Electrical Engineering @ [YorkU logo] YorkU • Arbalest Rocketry" */}
       <div className="w-full max-w-[330px] sm:max-w-none text-[15px] sm:text-[19px] font-medium text-white/80 tracking-normal mb-7 sm:mb-8 flex items-center justify-center flex-wrap gap-x-1.5 gap-y-1 leading-relaxed">
         <span>Electrical Engineering</span>
-        <span className="font-semibold text-white ml-1.5 flex items-center gap-1.5">
+        <span className="font-semibold text-white ml-1.5 inline-flex items-center gap-1.5">
           @
           <img
             src={assetPath("/yorku-u-logo.png")}
             alt="York University Red Logo Mark"
-            className="h-[15px] sm:h-[16px] w-auto inline-block rounded-[2px] shadow-sm select-none"
+            className="h-[16px] sm:h-[18px] w-auto inline-block rounded-[2px] shadow-sm select-none translate-y-[1px]"
           />
           YorkU
         </span>
