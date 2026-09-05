@@ -226,15 +226,13 @@ export default function ScrambleName({
     }
   }, [triggerRandomLetterGlitch]);
 
-  // Viewport visibility only controls the 10s random letter glitch.
-  // Full-name descramble is reserved for the About nav click.
+  // Viewport entrance triggers the full-name glitch and starts the 10s random
+  // single-letter glitch while the About section stays visible.
   useEffect(() => {
     if (isInView) {
+      startDescramble();
+      pendingDescrambleRef.current = false;
       reset10sTimer();
-      if (pendingDescrambleRef.current) {
-        pendingDescrambleRef.current = false;
-        startDescramble();
-      }
     } else {
       stopDescramble();
       stopRandomGlitch();
