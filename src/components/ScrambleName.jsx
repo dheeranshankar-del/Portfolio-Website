@@ -5,7 +5,7 @@ const GLITCH_COLORS = ['text-white', 'text-cyan-400', 'text-rose-500', 'text-eme
 
 function ScrambleLetter({
   char,
-  isWaveActive = false,
+  isDescrambling = false,
   onHoverStart,
   onHoverEnd
 }) {
@@ -47,9 +47,9 @@ function ScrambleLetter({
     setGlitchStyle({ x: 0, y: 0, color: 'text-white' });
   }, [char]);
 
-  // Handle wave activation or hover state change
+  // Handle active scramble state (either hover or active descramble step)
   useEffect(() => {
-    const isActive = isHovered || isWaveActive;
+    const isActive = isHovered || isDescrambling;
     if (isActive) {
       startScramble();
     } else {
@@ -60,7 +60,7 @@ function ScrambleLetter({
         clearInterval(intervalRef.current);
       }
     };
-  }, [isHovered, isWaveActive, startScramble, stopScramble]);
+  }, [isHovered, isDescrambling, startScramble, stopScramble]);
 
   const handleMouseEnter = () => {
     setIsHovered(true);
@@ -72,7 +72,7 @@ function ScrambleLetter({
     if (onHoverEnd) onHoverEnd();
   };
 
-  const isActive = isHovered || isWaveActive;
+  const isActive = isHovered || isDescrambling;
 
   return (
     <span
@@ -104,28 +104,31 @@ export default function ScrambleName({
 }) {
   if (!text) return null;
 
-  const [waveIndex, setWaveIndex] = useState(-1);
+  // decodeIndex: -1 means fully resolved.
+  // When active (0 to text.length), letters at index >= decodeIndex actively scramble.
+  // Letters at index < decodeIndex are resolved to their clean character.
+  const [decodeIndex, setDecodeIndex] = useState(-1);
+
   const hoveredCountRef = useRef(0);
-  const pendingWaveRef = useRef(false);
-  const waveTimeoutRef = useRef(null);
+  const pendingDescrambleRef = useRef(false);
+  const descrambleTimeoutRef = useRef(null);
   const interval10sRef = useRef(null);
   const isInViewRef = useRef(isInView);
   const prevGlitchTriggerRef = useRef(glitchTrigger);
 
   isInViewRef.current = isInView;
 
-  const stopWave = useCallback(() => {
-    if (waveTimeoutRef.current) {
-      clearTimeout(waveTimeoutRef.current);
-      waveTimeoutRef.current = null;
+  const stopDescramble = useCallback(() => {
+    if (descrambleTimeoutRef.current) {
+      clearTimeout(descrambleTimeoutRef.current);
+      descrambleTimeoutRef.current = null;
     }
-    setWaveIndex(-1);
+    setDecodeIndex(-1);
   }, []);
 
-  const startWave = useCallback(() => {
-    stopWave();
+  const startDescramble = useCallback(() => {
+    stopDescramble();
 
-    // Respect reduced motion
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (prefersReduced || !isInViewRef.current) {
       return;
@@ -133,35 +136,35 @@ export default function ScrambleName({
 
     const runStep = (step) => {
       if (!isInViewRef.current) {
-        setWaveIndex(-1);
+        setDecodeIndex(-1);
         return;
       }
-      if (step >= text.length) {
-        setWaveIndex(-1);
+      if (step > text.length) {
+        setDecodeIndex(-1);
         return;
       }
 
-      setWaveIndex(step);
+      setDecodeIndex(step);
 
-      // Duration per character step: spaces 50ms, letters 150ms
-      const duration = text[step] === ' ' ? 50 : 150;
+      // Duration per step: space advances faster, letters resolve every ~85ms
+      const duration = step < text.length && text[step] === ' ' ? 40 : 85;
 
-      waveTimeoutRef.current = setTimeout(() => {
+      descrambleTimeoutRef.current = setTimeout(() => {
         runStep(step + 1);
       }, duration);
     };
 
     runStep(0);
-  }, [text, stopWave]);
+  }, [text, stopDescramble]);
 
-  const attemptWaveOrQueue = useCallback(() => {
+  const attemptDescrambleOrQueue = useCallback(() => {
     if (hoveredCountRef.current > 0) {
-      pendingWaveRef.current = true;
+      pendingDescrambleRef.current = true;
     } else {
-      pendingWaveRef.current = false;
-      startWave();
+      pendingDescrambleRef.current = false;
+      startDescramble();
     }
-  }, [startWave]);
+  }, [startDescramble]);
 
   const reset10sTimer = useCallback(() => {
     if (interval10sRef.current) {
@@ -171,68 +174,71 @@ export default function ScrambleName({
 
     if (isInView) {
       interval10sRef.current = setInterval(() => {
-        attemptWaveOrQueue();
+        attemptDescrambleOrQueue();
       }, 10000);
     }
-  }, [isInView, attemptWaveOrQueue]);
+  }, [isInView, attemptDescrambleOrQueue]);
 
-  // Handle hover callbacks from individual letters
+  // Hover handlers from child letters
   const handleHoverStart = useCallback(() => {
     hoveredCountRef.current += 1;
   }, []);
 
   const handleHoverEnd = useCallback(() => {
     hoveredCountRef.current = Math.max(0, hoveredCountRef.current - 1);
-    if (hoveredCountRef.current === 0 && pendingWaveRef.current) {
-      pendingWaveRef.current = false;
-      startWave();
+    if (hoveredCountRef.current === 0 && pendingDescrambleRef.current) {
+      pendingDescrambleRef.current = false;
+      startDescramble();
     }
-  }, [startWave]);
+  }, [startDescramble]);
 
-  // Viewport entrance & exit handler
+  // Viewport entrance & exit listener
   useEffect(() => {
     if (isInView) {
-      startWave();
+      startDescramble();
       reset10sTimer();
     } else {
-      stopWave();
+      stopDescramble();
       if (interval10sRef.current) {
         clearInterval(interval10sRef.current);
         interval10sRef.current = null;
       }
-      pendingWaveRef.current = false;
+      pendingDescrambleRef.current = false;
     }
 
     return () => {
-      stopWave();
+      stopDescramble();
       if (interval10sRef.current) {
         clearInterval(interval10sRef.current);
       }
     };
-  }, [isInView, startWave, reset10sTimer, stopWave]);
+  }, [isInView, startDescramble, reset10sTimer, stopDescramble]);
 
-  // Nav click trigger handler
+  // Nav click trigger listener
   useEffect(() => {
     if (glitchTrigger !== prevGlitchTriggerRef.current) {
       prevGlitchTriggerRef.current = glitchTrigger;
       if (isInView) {
-        startWave();
+        startDescramble();
         reset10sTimer();
       }
     }
-  }, [glitchTrigger, isInView, startWave, reset10sTimer]);
+  }, [glitchTrigger, isInView, startDescramble, reset10sTimer]);
 
   return (
     <span className={className}>
-      {text.split('').map((char, index) => (
-        <ScrambleLetter
-          key={index}
-          char={char}
-          isWaveActive={index === waveIndex}
-          onHoverStart={handleHoverStart}
-          onHoverEnd={handleHoverEnd}
-        />
-      ))}
+      {text.split('').map((char, index) => {
+        const isDescrambling = decodeIndex !== -1 && index >= decodeIndex;
+        return (
+          <ScrambleLetter
+            key={index}
+            char={char}
+            isDescrambling={isDescrambling}
+            onHoverStart={handleHoverStart}
+            onHoverEnd={handleHoverEnd}
+          />
+        );
+      })}
     </span>
   );
 }
