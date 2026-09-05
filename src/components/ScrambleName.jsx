@@ -113,6 +113,7 @@ export default function ScrambleName({
 
   const hoveredCountRef = useRef(0);
   const pendingRandomGlitchRef = useRef(false);
+  const pendingDescrambleRef = useRef(false);
   const descrambleTimeoutRef = useRef(null);
   const randomGlitchTimeoutRef = useRef(null);
   const interval10sRef = useRef(null);
@@ -225,11 +226,15 @@ export default function ScrambleName({
     }
   }, [triggerRandomLetterGlitch]);
 
-  // Viewport entrance & exit handler
+  // Viewport visibility only controls the 10s random letter glitch.
+  // Full-name descramble is reserved for the About nav click.
   useEffect(() => {
     if (isInView) {
-      startDescramble();
       reset10sTimer();
+      if (pendingDescrambleRef.current) {
+        pendingDescrambleRef.current = false;
+        startDescramble();
+      }
     } else {
       stopDescramble();
       stopRandomGlitch();
@@ -256,6 +261,8 @@ export default function ScrambleName({
       if (isInView) {
         startDescramble();
         reset10sTimer();
+      } else {
+        pendingDescrambleRef.current = true;
       }
     }
   }, [glitchTrigger, isInView, startDescramble, reset10sTimer]);
