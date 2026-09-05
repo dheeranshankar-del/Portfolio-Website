@@ -17,18 +17,18 @@ export default function HeroSection({ onExploreProjects }) {
       </h1>
 
       {/* 2. Single-Line Subtitle: "Electrical Engineering @ [YorkU logo] YorkU • Arbalest Rocketry" */}
-      <div className="w-full max-w-[330px] sm:max-w-none text-[15px] sm:text-[19px] font-medium text-white/80 tracking-normal mb-7 sm:mb-8 flex items-center justify-center flex-wrap gap-x-1.5 gap-y-1 leading-relaxed">
+      <div className="w-full max-w-[330px] sm:max-w-none text-[15px] sm:text-[19px] font-medium text-white/80 tracking-normal mb-7 sm:mb-8 flex items-center justify-center flex-wrap gap-x-2 gap-y-1 leading-relaxed">
         <span>Electrical Engineering</span>
-        <span className="font-semibold text-white ml-1.5 inline-flex items-center gap-1.5">
+        <span className="font-semibold text-white inline-flex items-center gap-1.5">
           @
           <img
             src={assetPath("/yorku-u-logo.png")}
             alt="York University Red Logo Mark"
-            className="h-[16px] sm:h-[18px] w-auto inline-block rounded-[2px] shadow-sm select-none translate-y-[1px]"
+            className="h-[17px] sm:h-[19px] w-auto inline-block rounded-[2px] shadow-sm select-none translate-y-[0.5px]"
           />
-          YorkU
+          <span className="font-bold text-white">YorkU</span>
         </span>
-        <span className="hidden sm:inline text-white/80 mx-2 font-bold">•</span>
+        <span className="hidden sm:inline text-white/80 mx-1.5 font-bold">•</span>
         <span className="w-full sm:w-auto text-white/90">Arbalest Rocketry</span>
       </div>
 

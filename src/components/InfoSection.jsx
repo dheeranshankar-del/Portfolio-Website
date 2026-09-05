@@ -65,18 +65,16 @@ export default function InfoSection() {
           <h2 className="text-2xl sm:text-3xl font-bold font-heading text-white tracking-tight">
             <ScrambleName text="Dheeran Shankar" isInView={hasScrambledName} />
           </h2>
-          <div className="text-[16px] sm:text-[18px] font-medium text-white/80 tracking-normal flex items-center flex-wrap gap-y-1">
-            <span>
-              Electrical Engineering
-            </span>
-            <span className="font-semibold text-white ml-1.5 inline-flex items-center gap-1.5">
+          <div className="text-[16px] sm:text-[18px] font-medium text-white/80 tracking-normal flex items-center flex-wrap gap-x-2 gap-y-1">
+            <span>Electrical Engineering</span>
+            <span className="font-semibold text-white inline-flex items-center gap-1.5">
               @
               <img
                 src={assetPath("/yorku-u-logo.png")}
                 alt="York University Red Logo Mark"
-                className="h-[16px] sm:h-[18px] w-auto inline-block rounded-[2px] shadow-sm select-none translate-y-[1px]"
+                className="h-[17px] sm:h-[19px] w-auto inline-block rounded-[2px] shadow-sm select-none translate-y-[0.5px]"
               />
-              York University
+              <span className="font-bold text-white">York University</span>
             </span>
           </div>
         </div>
