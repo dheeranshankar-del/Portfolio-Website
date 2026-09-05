@@ -15,36 +15,29 @@ export default function App() {
   const [isMissionControlOpen, setIsMissionControlOpen] = useState(false);
   const [aboutGlitchTrigger, setAboutGlitchTrigger] = useState(1);
 
-  // Automatic Navbar Scroll Spy
+  // Automatic Navbar Scroll Spy (Bidirectional: Projects <-> About)
   useEffect(() => {
-    const projectsEl = document.getElementById('projects-section');
-    const aboutEl = document.getElementById('about-section');
+    const handleScroll = () => {
+      const aboutEl = document.getElementById('about-section');
+      if (!aboutEl) return;
 
-    if (!projectsEl || !aboutEl) return;
+      const rect = aboutEl.getBoundingClientRect();
+      const windowHeight = window.innerHeight;
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            if (entry.target.id === 'about-section') {
-              setActiveTab('about');
-            } else if (entry.target.id === 'projects-section') {
-              setActiveTab('projects');
-            }
-          }
-        });
-      },
-      {
-        threshold: 0.2,
-        rootMargin: '-10% 0px -30% 0px'
+      // Switch to 'about' when About section enters upper half of viewport (55%)
+      if (rect.top <= windowHeight * 0.55 && rect.bottom > 0) {
+        setActiveTab('about');
+      } else {
+        // Switch back to 'projects' whenever user is above About section
+        setActiveTab('projects');
       }
-    );
+    };
 
-    observer.observe(projectsEl);
-    observer.observe(aboutEl);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
 
     return () => {
-      observer.disconnect();
+      window.removeEventListener('scroll', handleScroll);
     };
   }, []);
 
