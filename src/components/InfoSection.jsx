@@ -72,7 +72,7 @@ export default function InfoSection() {
               <img
                 src={assetPath("/yorku-u-logo.png")}
                 alt="York University Red Logo Mark"
-                className="h-[17px] sm:h-[19px] w-auto inline-block rounded-[2px] shadow-sm select-none translate-y-[0.5px]"
+                className="h-[17px] sm:h-[19px] w-auto inline-block rounded-[3.5px] shadow-sm select-none translate-y-[0.5px]"
               />
               <span className="font-bold text-white">York University</span>
             </span>
