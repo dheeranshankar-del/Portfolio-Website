@@ -1,22 +1,25 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 
 const CHAR_SET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#$%&*!@?><{}[]=+/~';
 const GLITCH_COLORS = ['text-white', 'text-cyan-400', 'text-rose-500', 'text-emerald-400', 'text-white/60'];
 
-function ScrambleLetter({ char, autoGlitch = false, autoGlitchDuration = 2400 }) {
+function ScrambleLetter({
+  char,
+  isWaveActive = false,
+  onHoverStart,
+  onHoverEnd
+}) {
   if (char === ' ') {
     return <span className="whitespace-pre"> </span>;
   }
 
   const [displayChar, setDisplayChar] = useState(char);
   const [isHovered, setIsHovered] = useState(false);
-  const [isAutoGlitching, setIsAutoGlitching] = useState(false);
   const [glitchStyle, setGlitchStyle] = useState({ x: 0, y: 0, color: 'text-white' });
 
   const intervalRef = useRef(null);
-  const autoTimeoutRef = useRef(null);
 
-  const startScramble = () => {
+  const startScramble = useCallback(() => {
     if (intervalRef.current) clearInterval(intervalRef.current);
 
     intervalRef.current = setInterval(() => {
@@ -33,55 +36,43 @@ function ScrambleLetter({ char, autoGlitch = false, autoGlitchDuration = 2400 })
         color: randomColor
       });
     }, 75);
-  };
+  }, []);
 
-  const stopScramble = () => {
+  const stopScramble = useCallback(() => {
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
       intervalRef.current = null;
     }
     setDisplayChar(char);
     setGlitchStyle({ x: 0, y: 0, color: 'text-white' });
-  };
+  }, [char]);
 
+  // Handle wave activation or hover state change
   useEffect(() => {
-    if (autoGlitch) {
-      setIsAutoGlitching(true);
+    const isActive = isHovered || isWaveActive;
+    if (isActive) {
       startScramble();
-
-      if (autoTimeoutRef.current) clearTimeout(autoTimeoutRef.current);
-      autoTimeoutRef.current = setTimeout(() => {
-        setIsAutoGlitching(false);
-        stopScramble();
-      }, autoGlitchDuration);
-    }
-
-    return () => {
-      if (autoTimeoutRef.current) clearTimeout(autoTimeoutRef.current);
-    };
-  }, [autoGlitch, autoGlitchDuration]);
-
-  const handleMouseEnter = () => {
-    setIsHovered(true);
-    startScramble();
-  };
-
-  const handleMouseLeave = () => {
-    setIsHovered(false);
-    if (!isAutoGlitching) {
+    } else {
       stopScramble();
     }
-  };
-
-  useEffect(() => {
     return () => {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
       }
     };
-  }, []);
+  }, [isHovered, isWaveActive, startScramble, stopScramble]);
 
-  const isActive = isHovered || isAutoGlitching;
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+    if (onHoverStart) onHoverStart();
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+    if (onHoverEnd) onHoverEnd();
+  };
+
+  const isActive = isHovered || isWaveActive;
 
   return (
     <span
@@ -95,10 +86,10 @@ function ScrambleLetter({ char, autoGlitch = false, autoGlitchDuration = 2400 })
           ? { transform: `translate(${glitchStyle.x}px, ${glitchStyle.y}px)` }
           : undefined
       }
-      className={`inline-block cursor-pointer select-none focus:outline-none ${
+      className={`inline-block cursor-pointer select-none focus:outline-none min-w-[0.62em] text-center ${
         isActive ? `${glitchStyle.color} font-mono` : 'text-white'
       }`}
-      aria-label={displayChar}
+      aria-label={char}
     >
       {displayChar}
     </span>
@@ -106,27 +97,130 @@ function ScrambleLetter({ char, autoGlitch = false, autoGlitchDuration = 2400 })
 }
 
 export default function ScrambleName({
-  text,
+  text = 'Dheeran Shankar',
   isInView = false,
+  glitchTrigger = 0,
   className = ''
 }) {
   if (!text) return null;
 
-  const [randomGlitchIndex, setRandomGlitchIndex] = useState(-1);
+  const [waveIndex, setWaveIndex] = useState(-1);
+  const hoveredCountRef = useRef(0);
+  const pendingWaveRef = useRef(false);
+  const waveTimeoutRef = useRef(null);
+  const interval10sRef = useRef(null);
+  const isInViewRef = useRef(isInView);
+  const prevGlitchTriggerRef = useRef(glitchTrigger);
 
+  isInViewRef.current = isInView;
+
+  const stopWave = useCallback(() => {
+    if (waveTimeoutRef.current) {
+      clearTimeout(waveTimeoutRef.current);
+      waveTimeoutRef.current = null;
+    }
+    setWaveIndex(-1);
+  }, []);
+
+  const startWave = useCallback(() => {
+    stopWave();
+
+    // Respect reduced motion
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReduced || !isInViewRef.current) {
+      return;
+    }
+
+    const runStep = (step) => {
+      if (!isInViewRef.current) {
+        setWaveIndex(-1);
+        return;
+      }
+      if (step >= text.length) {
+        setWaveIndex(-1);
+        return;
+      }
+
+      setWaveIndex(step);
+
+      // Duration per character step: spaces 50ms, letters 150ms
+      const duration = text[step] === ' ' ? 50 : 150;
+
+      waveTimeoutRef.current = setTimeout(() => {
+        runStep(step + 1);
+      }, duration);
+    };
+
+    runStep(0);
+  }, [text, stopWave]);
+
+  const attemptWaveOrQueue = useCallback(() => {
+    if (hoveredCountRef.current > 0) {
+      pendingWaveRef.current = true;
+    } else {
+      pendingWaveRef.current = false;
+      startWave();
+    }
+  }, [startWave]);
+
+  const reset10sTimer = useCallback(() => {
+    if (interval10sRef.current) {
+      clearInterval(interval10sRef.current);
+      interval10sRef.current = null;
+    }
+
+    if (isInView) {
+      interval10sRef.current = setInterval(() => {
+        attemptWaveOrQueue();
+      }, 10000);
+    }
+  }, [isInView, attemptWaveOrQueue]);
+
+  // Handle hover callbacks from individual letters
+  const handleHoverStart = useCallback(() => {
+    hoveredCountRef.current += 1;
+  }, []);
+
+  const handleHoverEnd = useCallback(() => {
+    hoveredCountRef.current = Math.max(0, hoveredCountRef.current - 1);
+    if (hoveredCountRef.current === 0 && pendingWaveRef.current) {
+      pendingWaveRef.current = false;
+      startWave();
+    }
+  }, [startWave]);
+
+  // Viewport entrance & exit handler
   useEffect(() => {
     if (isInView) {
-      const nonSpaceIndices = text
-        .split('')
-        .map((c, i) => (c !== ' ' ? i : null))
-        .filter((i) => i !== null);
+      startWave();
+      reset10sTimer();
+    } else {
+      stopWave();
+      if (interval10sRef.current) {
+        clearInterval(interval10sRef.current);
+        interval10sRef.current = null;
+      }
+      pendingWaveRef.current = false;
+    }
 
-      if (nonSpaceIndices.length > 0) {
-        const randomIndex = nonSpaceIndices[Math.floor(Math.random() * nonSpaceIndices.length)];
-        setRandomGlitchIndex(randomIndex);
+    return () => {
+      stopWave();
+      if (interval10sRef.current) {
+        clearInterval(interval10sRef.current);
+      }
+    };
+  }, [isInView, startWave, reset10sTimer, stopWave]);
+
+  // Nav click trigger handler
+  useEffect(() => {
+    if (glitchTrigger !== prevGlitchTriggerRef.current) {
+      prevGlitchTriggerRef.current = glitchTrigger;
+      if (isInView) {
+        startWave();
+        reset10sTimer();
       }
     }
-  }, [isInView, text]);
+  }, [glitchTrigger, isInView, startWave, reset10sTimer]);
 
   return (
     <span className={className}>
@@ -134,8 +228,9 @@ export default function ScrambleName({
         <ScrambleLetter
           key={index}
           char={char}
-          autoGlitch={index === randomGlitchIndex && isInView}
-          autoGlitchDuration={2400}
+          isWaveActive={index === waveIndex}
+          onHoverStart={handleHoverStart}
+          onHoverEnd={handleHoverEnd}
         />
       ))}
     </span>
