@@ -104,53 +104,14 @@ export default function ClickGalaxyOverlay() {
       return y >= (rect.top - 60) && y <= (rect.bottom + 60);
     };
 
-    // Mouse move handler: generate continuous smooth trail along path (About section only)
-    const handleMouseMove = (e) => {
-      const x = e.clientX;
-      const y = e.clientY;
-
-      // Only generate trail when cursor is inside the About section
-      if (!isInsideAboutSection(e.target, x, y)) {
-        lastMouseX = null;
-        lastMouseY = null;
-        return;
-      }
-
-      isMouseOverInteractive = isInteractiveElement(e.target);
-
-      if (!isMouseOverInteractive && lastMouseX !== null && lastMouseY !== null) {
-        const dx = x - lastMouseX;
-        const dy = y - lastMouseY;
-        const dist = Math.hypot(dx, dy);
-
-        // Interpolate trail points for fast mouse movement
-        if (dist > 3) {
-          const steps = Math.min(Math.floor(dist / 6), 8);
-          for (let i = 0; i <= steps; i++) {
-            const t = i / Math.max(steps, 1);
-            const interpX = lastMouseX + dx * t;
-            const interpY = lastMouseY + dy * t;
-            if (Math.random() < 0.75) {
-              spawnTrailParticle(interpX, interpY, dx, dy);
-            }
-          }
-        }
-      }
-
-      lastMouseX = x;
-      lastMouseY = y;
-    };
-
-    // Click handler: trigger star burst when clicking empty space in About section
+    // Click handler: trigger star burst when clicking empty space
     const handleClick = (e) => {
       if (e.clientX === 0 && e.clientY === 0) return;
-      if (!isInsideAboutSection(e.target, e.clientX, e.clientY)) return;
       if (isInteractiveElement(e.target)) return;
 
       spawnClickBurst(e.clientX, e.clientY);
     };
 
-    window.addEventListener('mousemove', handleMouseMove, { passive: true });
     window.addEventListener('click', handleClick, { capture: true });
 
     // Render loop
@@ -198,7 +159,6 @@ export default function ClickGalaxyOverlay() {
 
     return () => {
       window.removeEventListener('resize', handleResize);
-      window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('click', handleClick, { capture: true });
       cancelAnimationFrame(animFrameId);
     };
