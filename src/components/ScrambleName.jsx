@@ -180,10 +180,12 @@ export default function ScrambleName({
 
     const runStep = (step) => {
       if (!isInViewRef.current) {
+        descrambleTimeoutRef.current = null;
         setDecodeIndex(-1);
         return;
       }
       if (step > text.length) {
+        descrambleTimeoutRef.current = null;
         setDecodeIndex(-1);
         return;
       }
@@ -193,6 +195,7 @@ export default function ScrambleName({
       const duration = step < text.length && text[step] === ' ' ? 40 : 85;
 
       descrambleTimeoutRef.current = setTimeout(() => {
+        descrambleTimeoutRef.current = null;
         runStep(step + 1);
       }, duration);
     };
