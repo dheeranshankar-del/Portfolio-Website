@@ -6,7 +6,6 @@ const GLITCH_COLORS = ['text-white', 'text-cyan-400', 'text-rose-500', 'text-eme
 function ScrambleLetter({
   char,
   isDescrambling = false,
-  isRandomGlitching = false,
   onHoverStart,
   onHoverEnd
 }) {
@@ -49,7 +48,7 @@ function ScrambleLetter({
   }, [char]);
 
   useEffect(() => {
-    const isActive = isHovered || isDescrambling || isRandomGlitching;
+    const isActive = isHovered || isDescrambling;
     if (isActive) {
       startScramble();
     } else {
@@ -60,7 +59,7 @@ function ScrambleLetter({
         clearInterval(intervalRef.current);
       }
     };
-  }, [isHovered, isDescrambling, isRandomGlitching, startScramble, stopScramble]);
+  }, [isHovered, isDescrambling, startScramble, stopScramble]);
 
   const handleMouseEnter = () => {
     setIsHovered(true);
@@ -72,7 +71,7 @@ function ScrambleLetter({
     if (onHoverEnd) onHoverEnd();
   };
 
-  const isActive = isHovered || isDescrambling || isRandomGlitching;
+  const isActive = isHovered || isDescrambling;
 
   return (
     <span
@@ -108,14 +107,9 @@ export default function ScrambleName({
   // 0 to text.length during full matrix descramble.
   const [decodeIndex, setDecodeIndex] = useState(-1);
 
-  // randomGlitchIndex: -1 means no 10s random letter glitch active.
-  const [randomGlitchIndex, setRandomGlitchIndex] = useState(-1);
-
   const hoveredCountRef = useRef(0);
-  const pendingRandomGlitchRef = useRef(false);
   const pendingDescrambleRef = useRef(false);
   const descrambleTimeoutRef = useRef(null);
-  const randomGlitchTimeoutRef = useRef(null);
   const interval10sRef = useRef(null);
   const isInViewRef = useRef(isInView);
   const prevGlitchTriggerRef = useRef(glitchTrigger);
@@ -130,48 +124,8 @@ export default function ScrambleName({
     setDecodeIndex(-1);
   }, []);
 
-  const stopRandomGlitch = useCallback(() => {
-    if (randomGlitchTimeoutRef.current) {
-      clearTimeout(randomGlitchTimeoutRef.current);
-      randomGlitchTimeoutRef.current = null;
-    }
-    setRandomGlitchIndex(-1);
-  }, []);
-
-  // Trigger one random letter glitch (used every 10s)
-  const triggerRandomLetterGlitch = useCallback(() => {
-    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (prefersReduced || !isInViewRef.current) return;
-
-    if (descrambleTimeoutRef.current !== null) return;
-
-    if (hoveredCountRef.current > 0) {
-      pendingRandomGlitchRef.current = true;
-      return;
-    }
-
-    const nonSpaceIndices = text
-      .split('')
-      .map((c, i) => (c !== ' ' ? i : null))
-      .filter((i) => i !== null);
-
-    if (nonSpaceIndices.length === 0) return;
-
-    const randomIndex = nonSpaceIndices[Math.floor(Math.random() * nonSpaceIndices.length)];
-    setRandomGlitchIndex(randomIndex);
-
-    if (randomGlitchTimeoutRef.current) {
-      clearTimeout(randomGlitchTimeoutRef.current);
-    }
-
-    randomGlitchTimeoutRef.current = setTimeout(() => {
-      setRandomGlitchIndex(-1);
-    }, 1000);
-  }, [text]);
-
   const startDescramble = useCallback(() => {
     stopDescramble();
-    stopRandomGlitch();
 
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (prefersReduced || !isInViewRef.current) {
@@ -201,7 +155,16 @@ export default function ScrambleName({
     };
 
     runStep(0);
-  }, [text, stopDescramble, stopRandomGlitch]);
+  }, [text, stopDescramble]);
+
+  const attemptDescrambleOrQueue = useCallback(() => {
+    if (hoveredCountRef.current > 0) {
+      pendingDescrambleRef.current = true;
+    } else {
+      pendingDescrambleRef.current = false;
+      startDescramble();
+    }
+  }, [startDescramble]);
 
   const reset10sTimer = useCallback(() => {
     if (interval10sRef.current) {
@@ -211,10 +174,10 @@ export default function ScrambleName({
 
     if (isInView) {
       interval10sRef.current = setInterval(() => {
-        triggerRandomLetterGlitch();
+        attemptDescrambleOrQueue();
       }, 10000);
     }
-  }, [isInView, triggerRandomLetterGlitch]);
+  }, [isInView, attemptDescrambleOrQueue]);
 
   // Hover callbacks
   const handleHoverStart = useCallback(() => {
@@ -223,14 +186,13 @@ export default function ScrambleName({
 
   const handleHoverEnd = useCallback(() => {
     hoveredCountRef.current = Math.max(0, hoveredCountRef.current - 1);
-    if (hoveredCountRef.current === 0 && pendingRandomGlitchRef.current) {
-      pendingRandomGlitchRef.current = false;
-      triggerRandomLetterGlitch();
+    if (hoveredCountRef.current === 0 && pendingDescrambleRef.current) {
+      pendingDescrambleRef.current = false;
+      startDescramble();
     }
-  }, [triggerRandomLetterGlitch]);
+  }, [startDescramble]);
 
-  // Viewport entrance triggers the full-name glitch and starts the 10s random
-  // single-letter glitch while the About section stays visible.
+  // Viewport entrance handler: plays full matrix descramble and sets 10s interval
   useEffect(() => {
     if (isInView) {
       startDescramble();
@@ -238,24 +200,22 @@ export default function ScrambleName({
       reset10sTimer();
     } else {
       stopDescramble();
-      stopRandomGlitch();
       if (interval10sRef.current) {
         clearInterval(interval10sRef.current);
         interval10sRef.current = null;
       }
-      pendingRandomGlitchRef.current = false;
+      pendingDescrambleRef.current = false;
     }
 
     return () => {
       stopDescramble();
-      stopRandomGlitch();
       if (interval10sRef.current) {
         clearInterval(interval10sRef.current);
       }
     };
-  }, [isInView, startDescramble, reset10sTimer, stopDescramble, stopRandomGlitch]);
+  }, [isInView, startDescramble, reset10sTimer, stopDescramble]);
 
-  // Nav click trigger handler (plays full descramble once on click)
+  // Nav click trigger handler (plays full descramble on click & resets 10s timer)
   useEffect(() => {
     if (glitchTrigger !== prevGlitchTriggerRef.current) {
       prevGlitchTriggerRef.current = glitchTrigger;
@@ -272,13 +232,11 @@ export default function ScrambleName({
     <span className={className}>
       {text.split('').map((char, index) => {
         const isDescrambling = decodeIndex !== -1 && index >= decodeIndex;
-        const isRandomGlitching = index === randomGlitchIndex;
         return (
           <ScrambleLetter
             key={index}
             char={char}
             isDescrambling={isDescrambling}
-            isRandomGlitching={isRandomGlitching}
             onHoverStart={handleHoverStart}
             onHoverEnd={handleHoverEnd}
           />
