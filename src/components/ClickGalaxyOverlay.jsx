@@ -90,7 +90,7 @@ export default function ClickGalaxyOverlay() {
       }
     };
 
-    // Helper: Check if cursor position or target is within the About section
+    // Helper: Check if cursor position or target is within the full-width About section band
     const isInsideAboutSection = (target, x, y) => {
       const aboutEl = document.getElementById('about-section');
       if (!aboutEl) return false;
@@ -100,12 +100,8 @@ export default function ClickGalaxyOverlay() {
       }
 
       const rect = aboutEl.getBoundingClientRect();
-      return (
-        x >= rect.left &&
-        x <= rect.right &&
-        y >= rect.top &&
-        y <= rect.bottom
-      );
+      // Full screen width coverage across the vertical span of the About section
+      return y >= (rect.top - 60) && y <= (rect.bottom + 60);
     };
 
     // Mouse move handler: generate continuous smooth trail along path (About section only)
