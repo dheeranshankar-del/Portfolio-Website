@@ -90,10 +90,35 @@ export default function ClickGalaxyOverlay() {
       }
     };
 
-    // Mouse move handler: generate continuous smooth trail along path
+    // Helper: Check if cursor position or target is within the About section
+    const isInsideAboutSection = (target, x, y) => {
+      const aboutEl = document.getElementById('about-section');
+      if (!aboutEl) return false;
+
+      if (target && aboutEl.contains(target)) {
+        return true;
+      }
+
+      const rect = aboutEl.getBoundingClientRect();
+      return (
+        x >= rect.left &&
+        x <= rect.right &&
+        y >= rect.top &&
+        y <= rect.bottom
+      );
+    };
+
+    // Mouse move handler: generate continuous smooth trail along path (About section only)
     const handleMouseMove = (e) => {
       const x = e.clientX;
       const y = e.clientY;
+
+      // Only generate trail when cursor is inside the About section
+      if (!isInsideAboutSection(e.target, x, y)) {
+        lastMouseX = null;
+        lastMouseY = null;
+        return;
+      }
 
       isMouseOverInteractive = isInteractiveElement(e.target);
 
@@ -120,9 +145,10 @@ export default function ClickGalaxyOverlay() {
       lastMouseY = y;
     };
 
-    // Click handler: trigger star burst when clicking empty space
+    // Click handler: trigger star burst when clicking empty space in About section
     const handleClick = (e) => {
       if (e.clientX === 0 && e.clientY === 0) return;
+      if (!isInsideAboutSection(e.target, e.clientX, e.clientY)) return;
       if (isInteractiveElement(e.target)) return;
 
       spawnClickBurst(e.clientX, e.clientY);
